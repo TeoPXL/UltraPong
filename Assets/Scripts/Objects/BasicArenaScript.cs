@@ -37,6 +37,11 @@ namespace Objects
             }
         }
 
+        public void SpawnPowerup()
+        {
+            
+        }
+
         void SpawnWalls()
         {
             GameObject northWall = Instantiate(wallPrefab);
@@ -45,6 +50,14 @@ namespace Objects
             GameObject southWall = Instantiate(wallPrefab);
             southWall.transform.localPosition = new Vector3(0, -height / 2, 0);
             southWall.transform.localScale = new Vector3(width, 0.1f, 0);
+
+            // just for testing
+            GameObject eastWall = Instantiate(wallPrefab);
+            eastWall.transform.localPosition = new Vector3(width / 2, 0, 0);
+            eastWall.transform.localScale = new Vector3(0.1f, height, 0);
+            GameObject westWall = Instantiate(wallPrefab);
+            westWall.transform.localPosition = new Vector3(-width / 2, 0, 0);
+            westWall.transform.localScale = new Vector3(0.1f, height, 0);
         }
 
         void SpawnBall()

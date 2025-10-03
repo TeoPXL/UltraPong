@@ -9,7 +9,7 @@ namespace Objects
         private Rigidbody2D body;
         private Vector2 velocity;
         public Vector2 randomnessRange = new Vector2(-1f, 1f);
-
+        public Player lastHitter;
 
         public void ChangeDiameter(float newDiameter)
         {
@@ -23,7 +23,7 @@ namespace Objects
             transform.GetChild(0).localScale = new Vector3(diameter, diameter, 1);
             GetComponent<CircleCollider2D>().radius = diameter / 2;
             body = GetComponent<Rigidbody2D>();
-            body.linearVelocity = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * speed;
+            body.linearVelocity = new Vector2(10f * Random.Range(-1f, 1f), 0.1f * Random.Range(-1f, 1f)).normalized * speed;
             velocity = body.linearVelocity;        
         }
 
@@ -31,10 +31,14 @@ namespace Objects
         {
             Vector2 normal = collision.contacts[0].normal;
             Vector2 reflected = Vector2.Reflect(velocity, normal);
-            Vector2 randomBoost = new Vector2(Random.Range(randomnessRange.x, randomnessRange.y), Random.Range(randomnessRange.x, randomnessRange.y));
-            body.linearVelocity = (reflected + randomBoost).normalized * speed;
+            reflected = new Vector2(reflected.x * Random.Range(0.9f, 1.1f), reflected.y * Random.Range(0.9f, 1.1f));
+            body.linearVelocity = reflected.normalized * speed;
             velocity = body.linearVelocity;
-            Debug.Log(velocity);
+            Player hitter = collision.gameObject.GetComponent<Player>();
+            if (hitter != null)
+            {
+                lastHitter = hitter;
+            }
         }
 
         void OnPause()
