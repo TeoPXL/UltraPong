@@ -20,8 +20,8 @@ namespace Shared
             GameStateInitializer.Instance.OnStateEntered += _enterPaused;
             GameStateInitializer.Instance.OnStateExited += _exitedPaused;
 
-            if (GameStateInitializer.Instance.CurrentGameState == GameState.Paused) OnPause();
-            else OnResume();
+            // if (GameStateInitializer.Instance.CurrentGameState == GameState.Paused) OnPause();
+            // else OnResume();
         }
 
         protected virtual void OnDestroy()

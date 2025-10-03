@@ -1,4 +1,5 @@
 using System.Collections;
+using Shared;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,11 +14,8 @@ namespace Objects
         public GameObject playerPrefab;
         public float ballDiameter = 0.3f;
         private Ball _ball;
+
         private Player[] _players;
-        public InputActionReference up1;
-        public InputActionReference down1;
-        public InputActionReference up2;
-        public InputActionReference down2;
 
 
         public void SpawnObjects() // callen bij start idle
@@ -29,7 +27,7 @@ namespace Objects
 
         public void StartGame() // callen bij start play
         {
-            _ball.speed = 12;
+            _ball.speed = 2;
             _ball.Init();
             foreach (Player player in _players)
             {
@@ -63,16 +61,16 @@ namespace Objects
             player1.transform.position = new Vector3(-7, 0, 0);
             player1.GetComponent<Player>().arenaHeight = height;
             Player p1Script = player1.GetComponent<Player>();
-            p1Script.up = up1;
-            p1Script.down = down1;
+            p1Script.up = InputManager.Instance.playerOneUp;
+            p1Script.down = InputManager.Instance.playerOneDown;
             _players[0] = p1Script;
 
             GameObject player2 = Instantiate(playerPrefab);
             player2.transform.position = new Vector3(7, 0, 0);
             player2.GetComponent<Player>().arenaHeight = height;
             Player p2Script = player2.GetComponent<Player>();
-            p2Script.up = up2;
-            p2Script.down = down2;
+            p2Script.up = InputManager.Instance.playerTwoUp;
+            p2Script.down = InputManager.Instance.playerTwoDown;
             _players[1] = p2Script;
         }
     }
