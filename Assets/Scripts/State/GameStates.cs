@@ -22,19 +22,19 @@ namespace state
     {
         public override GameState GameState => GameState.Menu;
 
-        private MenuUI _prefab;
-        private MenuUI _instance;
+        private MenuUI _menuUI;
 
-        public MenuState(GameStateManager gameStateManager, MenuUI prefab) : base(gameStateManager)
+        public MenuState(GameStateManager gameStateManager, MenuUI menuUI) : base(gameStateManager)
         {
-            _prefab = prefab;
+            _menuUI = menuUI;
         }
 
         public override void Enter()
         {
-            _instance = UIManager.Instance.SpawnUI(_prefab);
-            _instance.OnStartClicked += HandleStart;
-            _instance.OnQuitClicked += HandleQuit;
+            Debug.Log("Enter menu");
+            _menuUI.gameObject.SetActive(true);
+            _menuUI.OnStartClicked += HandleStart;
+            _menuUI.OnQuitClicked += HandleQuit;
         }
 
         public override void Tick()
@@ -43,17 +43,17 @@ namespace state
 
         public override void Exit()
         {
-            if (_instance != null)
-            {
-                _instance.OnStartClicked -= HandleStart;
-                _instance.OnQuitClicked -= HandleQuit;
-                UIManager.Instance.DestroyUI(_instance);
-                _instance = null;
-            }
+            
+            Debug.Log("Exit from menu");
+            _menuUI.gameObject.SetActive(false);
+            _menuUI.OnStartClicked -= HandleStart;
+            _menuUI.OnQuitClicked -= HandleQuit;
         }
 
         private void HandleStart()
         {
+            Debug.Log("Handlestart for menu");
+            GameStateManager.PopState();
             GameStateManager.PushState(new IdleState(GameStateManager, UIManager.Instance.idleUIPrefab));
         }
 
@@ -66,27 +66,26 @@ namespace state
 
     public class IdleState : State
     {
-        private IdleUI _prefab;
-        private IdleUI _instance;
+        private IdleUI _idleUI;
         public override GameState GameState => GameState.Idle;
 
-        public IdleState(GameStateManager gameStateManager, IdleUI prefab) : base(gameStateManager)
+        public IdleState(GameStateManager gameStateManager, IdleUI idleUI) : base(gameStateManager)
         {
-            _prefab = prefab;
+            _idleUI = idleUI;
         }
 
         public override void Enter()
         {
-            _instance = UIManager.Instance.SpawnUI(_prefab);
+            
+            Debug.Log("Enter idle");
+            _idleUI.gameObject.SetActive(true);
         }
 
         public override void Exit()
         {
-            if (_instance != null)
-            {
-                UIManager.Instance.DestroyUI(_instance);
-                _instance = null;
-            }
+            
+            Debug.Log("Exit idle");
+            _idleUI.gameObject.SetActive(false);
         }
 
         public override void Tick()
