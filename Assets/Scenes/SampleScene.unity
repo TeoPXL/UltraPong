@@ -513,10 +513,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::state.GameStateManager
   menuUIPrefab: {fileID: 3501738689018115091, guid: adac596e2f33d4cbe8c45729b863c4fc, type: 3}
-  idleUIPrefab: {fileID: 0}
-  pauseUIPrefab: {fileID: 0}
-  playingUIPrefab: {fileID: 0}
-  winUIPrefab: {fileID: 0}
+  idleUIPrefab: {fileID: -5369199314246937187, guid: 7127b859c8f174e92a7420353211caab, type: 3}
+  pauseUIPrefab: {fileID: 2154625283297819877, guid: deadca7236d084510bc57b42ce82e44d, type: 3}
+  playingUIPrefab: {fileID: 4425296652957862004, guid: 719e2d0de3a3d419db63d41cdd3c15f7, type: 3}
+  winUIPrefab: {fileID: 3766002611837305007, guid: a745ad678d57f4fd18ebc5db77decbf5, type: 3}
   uiRoot: {fileID: 0}
   settings:
     coop: 1
