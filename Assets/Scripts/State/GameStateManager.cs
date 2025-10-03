@@ -39,6 +39,19 @@ namespace state
             
         }
         public event UnityAction<int> OnScoreChanged;
+        
+        private int winner; // Store the winner
+        public int Winner
+        {
+            get => winner;
+            set
+            {
+                winner = value; 
+                OnWin?.Invoke(winner);
+            }
+            
+        }
+        public event UnityAction<int> OnWin;
 
         [Header("Optional")] public Transform uiRoot; // parent instantiated UI under this
 

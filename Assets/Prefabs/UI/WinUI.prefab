@@ -354,3 +354,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc964c6affea1420cbeb6e4611b69f46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI.WinUI
+  winText: {fileID: 2050066389962132654}
