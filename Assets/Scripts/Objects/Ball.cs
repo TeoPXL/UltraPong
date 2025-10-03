@@ -24,7 +24,7 @@ namespace Objects
             GetComponent<CircleCollider2D>().radius = diameter / 2;
             body = GetComponent<Rigidbody2D>();
             body.linearVelocity = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * speed;
-            velocity = body.linearVelocity;        
+            velocity = body.linearVelocity;
         }
 
         void OnCollisionEnter2D(Collision2D collision)
@@ -52,5 +52,23 @@ namespace Objects
         {
             Destroy(gameObject);
         }
+        public void ApplySlow(float factor, float duration)
+        {
+            StartCoroutine(SlowRoutine(factor, duration));
+        }
+
+        private System.Collections.IEnumerator SlowRoutine(float factor, float duration)
+        {
+            float originalSpeed = speed;
+            speed *= factor;
+
+            body.linearVelocity = body.linearVelocity.normalized * speed;
+
+            yield return new WaitForSeconds(duration);
+
+            speed = originalSpeed;
+            body.linearVelocity = body.linearVelocity.normalized * speed;
+        }
+
     }
 }

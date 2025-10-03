@@ -1456,7 +1456,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::State.GameStateInitializer
   uiManager: {fileID: 803465475}
-  arena: {fileID: 3204245591685985097, guid: b329daf6ebee9994d8ab3dfd21678396, type: 3}
+  arena:
+  - {fileID: 3204245591685985097, guid: b329daf6ebee9994d8ab3dfd21678396, type: 3}
+  - {fileID: -437508409564015742, guid: bbf7a33542694f34dbfd4a6eed08b6b2, type: 3}
+  - {fileID: 3204245591685985097, guid: e3632d0acaf1e6b4faae6b01664afc1d, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

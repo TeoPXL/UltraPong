@@ -21,7 +21,7 @@ namespace State
         #region References
 
         [SerializeField] UIManager uiManager;
-        [SerializeField] BasicArenaScript arena;
+        [SerializeField] BasicArenaScript[] arena;
 
         #endregion
 
@@ -37,7 +37,7 @@ namespace State
         {
             _gameStateManager = new GameStateManager(new Context
             {
-                Arena = arena,
+                Arena = arena[2],
             });
 
             _gameStateManager.OnStateChanged += (p, n) => OnGameStateChanged?.Invoke(p, n);
