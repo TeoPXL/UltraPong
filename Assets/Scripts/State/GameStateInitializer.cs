@@ -9,7 +9,6 @@ namespace State
 {
     public struct Context
     {
-        public UIManager UIManager;
     }
 
     public class GameStateInitializer : Singleton<GameStateInitializer>
@@ -35,14 +34,13 @@ namespace State
         {
             _gameStateManager = new GameStateManager(new Context
             {
-                UIManager = uiManager,
             });
 
             _gameStateManager.OnStateChanged += (p, n) => OnGameStateChanged?.Invoke(p, n);
             _gameStateManager.OnStateEntered += s => OnStateEntered?.Invoke(s);
             _gameStateManager.OnStateExited += s => OnStateExited?.Invoke(s);
 
-            _gameStateManager.PushState(new MenuState(Context.UIManager.menuUIPrefab));
+            _gameStateManager.PushState(new MenuState(_gameStateManager, UIManager.Instance.menuUIPrefab));
         }
     }
 }

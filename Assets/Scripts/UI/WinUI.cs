@@ -11,7 +11,7 @@ namespace UI
         public void Awake()
         {
             winText.text = "";
-            GameStateManager.Instance.OnWin += UpdateWinText;
+            // GameStateManager.Instance.OnWin += UpdateWinText;
         }
 
         public void UpdateWinText(int player)
