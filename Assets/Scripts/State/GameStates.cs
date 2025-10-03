@@ -79,6 +79,7 @@ namespace state
             
             Debug.Log("Enter idle");
             _idleUI.gameObject.SetActive(true);
+            Play();
         }
 
         public override void Exit()
@@ -95,101 +96,69 @@ namespace state
             {
                 GameStateManager.PushState(new PauseState(GameStateManager, UIManager.Instance.pauseUIPrefab));
             }
+            
+        }
+        
+        private void Play()
+        {
+            Debug.Log("Go from idle to playing");
+            GameStateManager.PushState(new PlayingState(GameStateManager, UIManager.Instance.playingUIPrefab));
         }
     }
 
     public class PlayingState : State
     {
-        private PlayingUI _prefab;
-        private PlayingUI _instance;
+        private PlayingUI _playingUI;
         public override GameState GameState => GameState.Playing;
 
-        public PlayingState(GameStateManager gameStateManager, PlayingUI prefab) : base(gameStateManager)
+        public PlayingState(GameStateManager gameStateManager, PlayingUI playingUI) : base(gameStateManager)
         {
-            _prefab = prefab;
+            _playingUI = playingUI;
         }
 
         public override void Enter()
         {
-            _instance = UIManager.Instance.SpawnUI(_prefab);
-            // Add more UI in the same way
-
-            // state.GameStateManager.Instance.OnScoreChanged += RePlay;
-
+            _playingUI.gameObject.SetActive(true);
 
             Debug.Log("Playing state");
         }
 
-        public void RePlay(int scorePlayerOne, int scorePlayerTwo)
+        public override void Tick()
         {
-            //If max score has not been reached
-            if (System.Math.Max(scorePlayerOne, scorePlayerTwo) <= 5)
-            {
-                GameStateManager.PopState();
-            }
-            else
-            {
-                GameStateManager.PushState(new WinState(GameStateManager, UIManager.Instance.winUIPrefab));
-            }
         }
 
         public override void Exit()
         {
-            UIManager.Instance.DestroyUI(_instance);
-            _instance = null;
-        }
-
-        public override void Tick()
-        {
-            if (InputUtils.WasPausePressedThisFrame())
-            {
-                GameStateManager.PushState(
-                    new PauseState(GameStateManager, UIManager.Instance.pauseUIPrefab));
-            }
+            _playingUI.gameObject.SetActive(false);
         }
     }
 
     public class PauseState : State
     {
-        private PauseUI _prefab;
-        private PauseUI _instance;
+        private PauseUI _pauseUI;
         public override GameState GameState => GameState.Paused;
 
-        public PauseState(GameStateManager gameStateManager, PauseUI prefab) : base(gameStateManager)
+        public PauseState(GameStateManager gameStateManager, PauseUI pauseUI) : base(gameStateManager)
         {
-            _prefab = prefab;
+            _pauseUI = pauseUI;
         }
 
         public override void Enter()
         {
-            _instance = UIManager.Instance.SpawnUI(_prefab);
-            _instance.OnResumeClicked += Resume;
-            _instance.OnExitToMenuClicked += ExitToMenu;
+            _pauseUI.gameObject.SetActive(true);
+            _pauseUI.OnResumeClicked += Resume;
+            _pauseUI.OnExitToMenuClicked += ExitToMenu;
         }
 
         public override void Tick()
         {
-            if (InputUtils.WasPausePressedThisFrame())
-            {
-                Resume();
-            }
         }
 
         public override void Exit()
         {
-            if (_instance != null)
-            {
-                _instance.OnResumeClicked -= Resume;
-                _instance.OnExitToMenuClicked -= ExitToMenu;
-
-                UIManager.Instance.DestroyUI(_instance);
-                _instance = null;
-            }
-        }
-
-        public void ShowUI()
-        {
-            _instance?.gameObject.SetActive(true);
+            _pauseUI.gameObject.SetActive(false);
+            _pauseUI.OnResumeClicked -= Resume;
+            _pauseUI.OnExitToMenuClicked -= ExitToMenu;
         }
 
         private void Resume()
@@ -208,20 +177,19 @@ namespace state
 
     public class WinState : State
     {
-        private WinUI _prefab;
-        private WinUI _instance;
+        private WinUI _winUI;
 
         public override GameState GameState => GameState.Win;
 
-        public WinState(GameStateManager gameStateManager, WinUI prefab) : base(gameStateManager)
+        public WinState(GameStateManager gameStateManager, WinUI winUI) : base(gameStateManager)
         {
-            _prefab = prefab;
+            _winUI = winUI;
         }
 
         public override void Enter()
         {
             Debug.Log($"Enter win state");
-            _instance = UIManager.Instance.SpawnUI(_prefab);
+            _winUI.gameObject.SetActive(true);
         }
 
         public override void Tick()
@@ -231,11 +199,7 @@ namespace state
         public override void Exit()
         {
             Debug.Log("Exiting Win State");
-            if (_instance != null)
-            {
-                UIManager.Instance.DestroyUI(_instance);
-                _instance = null;
-            }
+            _winUI.gameObject.SetActive(false);
 
             Debug.Log("Exiting to menu");
             GameStateManager.ResetStack();
