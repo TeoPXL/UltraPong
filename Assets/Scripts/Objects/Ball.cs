@@ -4,7 +4,7 @@ namespace Objects
 {
     public class Ball : MonoBehaviour
     {
-        public float speed;
+        public float speed = 0.5f;
         public float diameter = 3f;
         private Rigidbody2D body;
         private Vector2 velocity;

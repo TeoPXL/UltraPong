@@ -119,6 +119,8 @@ namespace state
         private PlayingUI _playingUI;
         public override GameState GameState => GameState.Playing;
 
+        private const int WinScore = 5;
+
         public PlayingState(GameStateManager gameStateManager, PlayingUI playingUI) : base(gameStateManager)
         {
             _playingUI = playingUI;
@@ -127,6 +129,10 @@ namespace state
         public override void Enter()
         {
             _playingUI.gameObject.SetActive(true);
+
+            // subscribe to arena score events
+            GameStateManager.Context.Arena.OnScoreChanged += HandleScoreChanged;
+
             GameStateManager.Context.Arena.StartGame();
             Debug.Log("Playing state");
         }
@@ -138,6 +144,22 @@ namespace state
         public override void Exit()
         {
             _playingUI.gameObject.SetActive(false);
+            GameStateManager.Context.Arena.OnScoreChanged -= HandleScoreChanged;
+        }
+
+        private void HandleScoreChanged(int playerNumber, int newScore)
+        {
+            Debug.Log($"Player {playerNumber} scored. New score: {newScore}");
+
+            if (newScore >= WinScore)
+            {
+                // winner -> go to WinState
+                GameStateManager.PushState(new WinState(GameStateManager, UIManager.Instance.winUIPrefab, playerNumber));
+                return;
+            }
+
+            // Normal goal (not yet winner) -> end the round and go back to Idle
+            GameStateManager.PopState();
         }
     }
 
@@ -186,17 +208,20 @@ namespace state
     public class WinState : State
     {
         private WinUI _winUI;
+        private int _winner;
 
         public override GameState GameState => GameState.Win;
 
-        public WinState(GameStateManager gameStateManager, WinUI winUI) : base(gameStateManager)
+        public WinState(GameStateManager gameStateManager, WinUI winUI, int playerNumber) : base(gameStateManager)
         {
             _winUI = winUI;
+            _winner =  playerNumber;
         }
 
         public override void Enter()
         {
             Debug.Log($"Enter win state");
+            _winUI.UpdateWinText(_winner);
             _winUI.gameObject.SetActive(true);
         }
 
