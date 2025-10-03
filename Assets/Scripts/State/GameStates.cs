@@ -5,6 +5,13 @@ namespace state
 {
     public abstract class State
     {
+        protected readonly GameStateManager GameStateManager;
+
+        protected State(GameStateManager gameStateManager)
+        {
+            this.GameStateManager = gameStateManager;
+        }
+
         public abstract GameState GameState { get; }
         public abstract void Enter();
         public abstract void Tick();
@@ -18,14 +25,14 @@ namespace state
         private MenuUI _prefab;
         private MenuUI _instance;
 
-        public MenuState(MenuUI prefab)
+        public MenuState(GameStateManager gameStateManager, MenuUI prefab) : base(gameStateManager)
         {
             _prefab = prefab;
         }
 
         public override void Enter()
         {
-            _instance = GameStateManager.Instance.SpawnUI(_prefab);
+            _instance = UIManager.Instance.SpawnUI(_prefab);
             _instance.OnStartClicked += HandleStart;
             _instance.OnQuitClicked += HandleQuit;
         }
@@ -40,16 +47,14 @@ namespace state
             {
                 _instance.OnStartClicked -= HandleStart;
                 _instance.OnQuitClicked -= HandleQuit;
-                GameStateManager.Instance.DestroyUI(_instance);
+                UIManager.Instance.DestroyUI(_instance);
                 _instance = null;
             }
         }
 
         private void HandleStart()
         {
-            GameStateManager.Instance.ChangeState(
-                new IdleState(GameStateManager.Instance.idleUIPrefab)
-            );
+            GameStateManager.PushState(new IdleState(GameStateManager, UIManager.Instance.idleUIPrefab));
         }
 
         private void HandleQuit()
@@ -65,21 +70,21 @@ namespace state
         private IdleUI _instance;
         public override GameState GameState => GameState.Idle;
 
-        public IdleState(IdleUI prefab)
+        public IdleState(GameStateManager gameStateManager, IdleUI prefab) : base(gameStateManager)
         {
             _prefab = prefab;
         }
 
         public override void Enter()
         {
-            _instance = GameStateManager.Instance.SpawnUI(_prefab);
+            _instance = UIManager.Instance.SpawnUI(_prefab);
         }
 
         public override void Exit()
         {
             if (_instance != null)
             {
-                GameStateManager.Instance.DestroyUI(_instance);
+                UIManager.Instance.DestroyUI(_instance);
                 _instance = null;
             }
         }
@@ -89,7 +94,7 @@ namespace state
             // Do we want to allow pausing while idle? Then keep this
             if (InputUtils.WasPausePressedThisFrame())
             {
-                GameStateManager.Instance.PushState(new PauseState(GameStateManager.Instance.pauseUIPrefab));
+                GameStateManager.PushState(new PauseState(GameStateManager, UIManager.Instance.pauseUIPrefab));
             }
         }
     }
@@ -100,17 +105,17 @@ namespace state
         private PlayingUI _instance;
         public override GameState GameState => GameState.Playing;
 
-        public PlayingState(PlayingUI playingUIPrefab)
+        public PlayingState(GameStateManager gameStateManager, PlayingUI prefab) : base(gameStateManager)
         {
-            _prefab = playingUIPrefab;
+            _prefab = prefab;
         }
 
         public override void Enter()
         {
-            _instance = GameStateManager.Instance.SpawnUI(_prefab);
+            _instance = UIManager.Instance.SpawnUI(_prefab);
             // Add more UI in the same way
-            
-            GameStateManager.Instance.OnScoreChanged += RePlay;
+
+            // state.GameStateManager.Instance.OnScoreChanged += RePlay;
 
 
             Debug.Log("Playing state");
@@ -121,17 +126,17 @@ namespace state
             //If max score has not been reached
             if (System.Math.Max(scorePlayerOne, scorePlayerTwo) <= 5)
             {
-                GameStateManager.Instance.PopState();
+                GameStateManager.PopState();
             }
             else
             {
-                GameStateManager.Instance.PushState(new WinState(GameStateManager.Instance.winUIPrefab));
+                GameStateManager.PushState(new WinState(GameStateManager, UIManager.Instance.winUIPrefab));
             }
         }
 
         public override void Exit()
         {
-            GameStateManager.Instance.DestroyUI(_instance);
+            UIManager.Instance.DestroyUI(_instance);
             _instance = null;
         }
 
@@ -139,7 +144,8 @@ namespace state
         {
             if (InputUtils.WasPausePressedThisFrame())
             {
-                GameStateManager.Instance.PushState(new PauseState(GameStateManager.Instance.pauseUIPrefab));
+                GameStateManager.PushState(
+                    new PauseState(GameStateManager, UIManager.Instance.pauseUIPrefab));
             }
         }
     }
@@ -150,14 +156,14 @@ namespace state
         private PauseUI _instance;
         public override GameState GameState => GameState.Paused;
 
-        public PauseState(PauseUI prefab)
+        public PauseState(GameStateManager gameStateManager, PauseUI prefab) : base(gameStateManager)
         {
             _prefab = prefab;
         }
 
         public override void Enter()
         {
-            _instance = GameStateManager.Instance.SpawnUI(_prefab);
+            _instance = UIManager.Instance.SpawnUI(_prefab);
             _instance.OnResumeClicked += Resume;
             _instance.OnExitToMenuClicked += ExitToMenu;
         }
@@ -177,7 +183,7 @@ namespace state
                 _instance.OnResumeClicked -= Resume;
                 _instance.OnExitToMenuClicked -= ExitToMenu;
 
-                GameStateManager.Instance.DestroyUI(_instance);
+                UIManager.Instance.DestroyUI(_instance);
                 _instance = null;
             }
         }
@@ -189,13 +195,14 @@ namespace state
 
         private void Resume()
         {
-            GameStateManager.Instance.PopState();
+            GameStateManager.PopState();
         }
 
         private void ExitToMenu()
         {
             Debug.Log("Exiting to menu");
-            GameStateManager.Instance.ClearAndChangeState(new MenuState(GameStateManager.Instance.menuUIPrefab));
+            GameStateManager.ResetStack();
+            GameStateManager.PushState(new MenuState(GameStateManager, UIManager.Instance.menuUIPrefab));
         }
     }
 
@@ -204,10 +211,10 @@ namespace state
     {
         private WinUI _prefab;
         private WinUI _instance;
-        
+
         public override GameState GameState => GameState.Win;
-        
-        public WinState(WinUI prefab)
+
+        public WinState(GameStateManager gameStateManager, WinUI prefab) : base(gameStateManager)
         {
             _prefab = prefab;
         }
@@ -215,7 +222,7 @@ namespace state
         public override void Enter()
         {
             Debug.Log($"Enter win state");
-            _instance = GameStateManager.Instance.SpawnUI(_prefab);
+            _instance = UIManager.Instance.SpawnUI(_prefab);
         }
 
         public override void Tick()
@@ -227,13 +234,13 @@ namespace state
             Debug.Log("Exiting Win State");
             if (_instance != null)
             {
-                GameStateManager.Instance.DestroyUI(_instance);
+                UIManager.Instance.DestroyUI(_instance);
                 _instance = null;
             }
+
             Debug.Log("Exiting to menu");
-            GameStateManager.Instance.ClearAndChangeState(new MenuState(GameStateManager.Instance.menuUIPrefab));
+            GameStateManager.ResetStack();
+            GameStateManager.PushState(new MenuState(GameStateManager, UIManager.Instance.menuUIPrefab));
         }
-
     }
-
 }
