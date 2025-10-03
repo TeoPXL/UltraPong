@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using Shared;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,7 +16,7 @@ namespace Objects
         public GameObject playerPrefab;
         public float ballDiameter = 0.3f;
         private Ball _ball;
-        private Player[] players;
+        private Player[] _players;
         public InputActionReference up1;
         public InputActionReference down1;
         public InputActionReference up2;
@@ -25,6 +27,7 @@ namespace Objects
 
         // Event: (playerNumber, newScore) - playerNumber is 1 or 2
         public event Action<int,int> OnScoreChanged;
+
 
         public void SpawnObjects() // callen bij start idle
         {
@@ -48,9 +51,9 @@ namespace Objects
                 SpawnBall();
             }
 
-            _ball.speed = 12;
+            _ball.speed = 4;
             _ball.Init();
-            foreach (Player player in players)
+            foreach (Player player in _players)
             {
                 if (player != null) player.speed = 2;
             }
@@ -121,23 +124,23 @@ namespace Objects
 
         void SpawnPlayers()
         {
-            players = new Player[2];
+            _players = new Player[2];
 
             GameObject player1 = Instantiate(playerPrefab);
             player1.transform.position = new Vector3(-7f, 0f, 0f);
             player1.GetComponent<Player>().arenaHeight = height;
-            Player p1script = player1.GetComponent<Player>();
-            p1script.up = up1;
-            p1script.down = down1;
-            players[0] = p1script;
+            Player p1Script = player1.GetComponent<Player>();
+            p1Script.up = InputManager.Instance.playerOneUp;
+            p1Script.down = InputManager.Instance.playerOneDown;
+            _players[0] = p1Script;
 
             GameObject player2 = Instantiate(playerPrefab);
             player2.transform.position = new Vector3(7f, 0f, 0f);
             player2.GetComponent<Player>().arenaHeight = height;
-            Player p2script = player2.GetComponent<Player>();
-            p2script.up = up2;
-            p2script.down = down2;
-            players[1] = p2script;
+            Player p2Script = player2.GetComponent<Player>();
+            p2Script.up = InputManager.Instance.playerTwoUp;
+            p2Script.down = InputManager.Instance.playerTwoDown;
+            _players[1] = p2Script;
         }
 
         // Called by a Goal when the ball enters. playerNumber is 1 or 2.
@@ -161,11 +164,11 @@ namespace Objects
         
         void ResetPlayers()
         {
-            if (players == null || players.Length < 2) return;
+            if (_players == null || _players.Length < 2) return;
 
             // Reset positions to their spawn points
-            players[0].transform.position = new Vector3(-7f, 0f, 0f);
-            players[1].transform.position = new Vector3(7f, 0f, 0f);
+            _players[0].transform.position = new Vector3(-7f, 0f, 0f);
+            _players[1].transform.position = new Vector3(7f, 0f, 0f);
         }
         
         public void ResetArena()
@@ -184,16 +187,16 @@ namespace Objects
             }
 
             // Clear players array
-            if (players != null)
+            if (_players != null)
             {
-                for (int i = 0; i < players.Length; i++)
+                for (int i = 0; i < _players.Length; i++)
                 {
-                    if (players[i] != null)
+                    if (_players[i] != null)
                     {
-                        Destroy(players[i].gameObject);
+                        Destroy(_players[i].gameObject);
                     }
                 }
-                players = null;
+                _players = null;
             }
 
             // Reset scores
