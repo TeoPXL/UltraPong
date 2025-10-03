@@ -13,12 +13,12 @@ namespace Objects
         public GameObject playerPrefab;
         public float ballDiameter = 0.3f;
         private Ball _ball;
-        private Player[] players;
+        private Player[] _players;
         public InputActionReference up1;
         public InputActionReference down1;
         public InputActionReference up2;
         public InputActionReference down2;
-        
+
 
         public void SpawnObjects() // callen bij start idle
         {
@@ -31,7 +31,7 @@ namespace Objects
         {
             _ball.speed = 12;
             _ball.Init();
-            foreach (Player player in players)
+            foreach (Player player in _players)
             {
                 player.speed = 2;
             }
@@ -57,23 +57,23 @@ namespace Objects
 
         void SpawnPlayers()
         {
-            players = new Player[2];
+            _players = new Player[2];
 
             GameObject player1 = Instantiate(playerPrefab);
             player1.transform.position = new Vector3(-7, 0, 0);
             player1.GetComponent<Player>().arenaHeight = height;
-            Player p1script = player1.GetComponent<Player>();
-            p1script.up = up1;
-            p1script.down = down1;
-            players[0] = p1script;
+            Player p1Script = player1.GetComponent<Player>();
+            p1Script.up = up1;
+            p1Script.down = down1;
+            _players[0] = p1Script;
 
             GameObject player2 = Instantiate(playerPrefab);
             player2.transform.position = new Vector3(7, 0, 0);
             player2.GetComponent<Player>().arenaHeight = height;
-            Player p2script = player2.GetComponent<Player>();
-            p2script.up = up2;
-            p2script.down = down2;
-            players[1] = p2script;
+            Player p2Script = player2.GetComponent<Player>();
+            p2Script.up = up2;
+            p2Script.down = down2;
+            _players[1] = p2Script;
         }
     }
 }
