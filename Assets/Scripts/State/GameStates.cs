@@ -199,6 +199,7 @@ namespace state
         public override void Enter()
         {
             Debug.Log($"Enter win state");
+            _instance = GameStateManager.Instance.SpawnUI(_prefab);
         }
 
         public override void Tick()
@@ -208,6 +209,11 @@ namespace state
         public override void Exit()
         {
             Debug.Log("Exiting Win State");
+            if (_instance != null)
+            {
+                GameStateManager.Instance.DestroyUI(_instance);
+                _instance = null;
+            }
             Debug.Log("Exiting to menu");
             GameStateManager.Instance.ClearAndChangeState(new MenuState(GameStateManager.Instance.menuUIPrefab));
         }
