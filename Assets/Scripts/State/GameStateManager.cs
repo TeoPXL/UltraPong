@@ -59,9 +59,9 @@ namespace state
 
         public static GameStateManager Instance { get; private set; }
 
-        private Stack<State> stateStack = new();
+        private Stack<State> _stateStack = new();
 
-        public State CurrentState => stateStack.Count > 0 ? stateStack.Peek() : null;
+        public State CurrentState => _stateStack.Count > 0 ? _stateStack.Peek() : null;
 
         public GameSettings settings = new();
 
@@ -89,16 +89,16 @@ namespace state
 
         public void PushState(State newState)
         {
-            stateStack.Push(newState);
+            _stateStack.Push(newState);
             newState.Enter();
             NotifyTopStateChanged();
         }
 
         public void PopState()
         {
-            if (stateStack.Count == 0) return;
+            if (_stateStack.Count == 0) return;
 
-            var top = stateStack.Pop();
+            var top = _stateStack.Pop();
             try
             {
                 top.Exit();
@@ -113,9 +113,9 @@ namespace state
 
         public void ChangeState(State newState)
         {
-            if (stateStack.Count > 0)
+            if (_stateStack.Count > 0)
             {
-                var top = stateStack.Pop();
+                var top = _stateStack.Pop();
                 try
                 {
                     top.Exit();
@@ -126,7 +126,7 @@ namespace state
                 }
             }
 
-            stateStack.Push(newState);
+            _stateStack.Push(newState);
             newState.Enter();
             NotifyTopStateChanged();
         }
@@ -137,9 +137,9 @@ namespace state
         /// </summary>
         public void ClearAndChangeState(State newState)
         {
-            while (stateStack.Count > 0)
+            while (_stateStack.Count > 0)
             {
-                var s = stateStack.Pop();
+                var s = _stateStack.Pop();
                 try
                 {
                     s.Exit();
@@ -174,11 +174,11 @@ namespace state
         }
 
         // Convenience / helpers
-        public bool IsMenu => CurrentState.GameState == GameState.Menu;
-        public bool IsIdle => CurrentState.GameState == GameState.Idle;
-        public bool IsPlaying => CurrentState.GameState == GameState.Playing;
-        public bool IsPaused => (CurrentState.GameState == GameState.Paused);
-        public bool IsWin => CurrentState.GameState == GameState.Win;
+        public bool IsMenuState => CurrentState.GameState == GameState.Menu;
+        public bool IsIdleState => CurrentState.GameState == GameState.Idle;
+        public bool IsPlayingState => CurrentState.GameState == GameState.Playing;
+        public bool IsPausedState => (CurrentState.GameState == GameState.Paused);
+        public bool IsWinState => CurrentState.GameState == GameState.Win;
 
         [SerializeField] private bool startWithMenu = true;
 

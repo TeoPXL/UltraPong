@@ -96,27 +96,43 @@ namespace state
 
     public class PlayingState : State
     {
-        private PlayingUI _playingUIPrefab;
-        private PlayingUI _playingUIInstance;
+        private PlayingUI _prefab;
+        private PlayingUI _instance;
         public override GameState GameState => GameState.Playing;
 
         public PlayingState(PlayingUI playingUIPrefab)
         {
-            _playingUIPrefab = playingUIPrefab;
+            _prefab = playingUIPrefab;
         }
 
         public override void Enter()
         {
-            _playingUIInstance = GameStateManager.Instance.SpawnUI(_playingUIPrefab);
+            _instance = GameStateManager.Instance.SpawnUI(_prefab);
             // Add more UI in the same way
+            
+            GameStateManager.Instance.OnScoreChanged += RePlay;
+
 
             Debug.Log("Playing state");
         }
 
+        public void RePlay(int scorePlayerOne, int scorePlayerTwo)
+        {
+            //If max score has not been reached
+            if (System.Math.Max(scorePlayerOne, scorePlayerTwo) <= 5)
+            {
+                GameStateManager.Instance.PopState();
+            }
+            else
+            {
+                GameStateManager.Instance.PushState(new WinState(GameStateManager.Instance.winUIPrefab));
+            }
+        }
+
         public override void Exit()
         {
-            GameStateManager.Instance.DestroyUI(_playingUIInstance);
-            _playingUIInstance = null;
+            GameStateManager.Instance.DestroyUI(_instance);
+            _instance = null;
         }
 
         public override void Tick()
