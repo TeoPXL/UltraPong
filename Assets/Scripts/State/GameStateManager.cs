@@ -27,27 +27,29 @@ namespace state
         public PlayingUI playingUIPrefab;
         public WinUI winUIPrefab;
 
-        private int score; // We probably want to keep score
-        public int Score
+        private int[] _scores = new int[2]; // Two players
+
+        public int GetScore(int playerIndex)
         {
-            get => score;
-            set
-            {
-                score = value; 
-                OnScoreChanged?.Invoke(score);
-            }
-            
+            return _scores[playerIndex];
         }
-        public event UnityAction<int> OnScoreChanged;
+
+        public void SetScore(int playerIndex, int value)
+        {
+            _scores[playerIndex] = value;
+            OnScoreChanged?.Invoke(playerIndex, value);
+        }
+
+        public event UnityAction<int, int> OnScoreChanged; 
         
-        private int winner; // Store the winner
+        private int _winner; // Store the winner
         public int Winner
         {
-            get => winner;
+            get => _winner;
             set
             {
-                winner = value; 
-                OnWin?.Invoke(winner);
+                _winner = value; 
+                OnWin?.Invoke(_winner);
             }
             
         }
