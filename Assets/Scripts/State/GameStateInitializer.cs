@@ -33,7 +33,7 @@ namespace State
 
         #endregion
 
-        private void Start()
+        private void Awake()
         {
             _gameStateManager = new GameStateManager(new Context
             {

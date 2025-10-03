@@ -48,6 +48,7 @@ MonoBehaviour:
   height: 8
   width: 16
   wallPrefab: {fileID: 2460868911928700412, guid: 91d166e3cbade0e4faf9c2566af71ad2, type: 3}
+  goalPrefab: {fileID: 2460868911928700412, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
   ballPrefab: {fileID: 6877113799783841491, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
   playerPrefab: {fileID: 1268527654280983118, guid: f7153568a47dbd04f80fff54a41e312a, type: 3}
   ballDiameter: 0.3
