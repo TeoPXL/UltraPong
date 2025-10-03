@@ -137,11 +137,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b18fd09aac1dfc47bf9f26dcc9286e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  speed: 1
-  size: 1.5
   up: {fileID: 1832714143519553521, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   down: {fileID: -3672766125945074209, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   arenaHeight: 0
+  speed: 1
+  playerColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!61 &8164186127414319429
 BoxCollider2D:
   m_ObjectHideFlags: 0

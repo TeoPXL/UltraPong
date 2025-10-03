@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 4806292760961133503}
   - component: {fileID: 3204245591685985097}
   m_Layer: 0
-  m_Name: BasicArena
+  m_Name: BackgroundArena
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -145,8 +145,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicArenaScript
   ballPrefab: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
-  playerOnePrefab: {fileID: 7370083601163371608}
-  playerTwoPrefab: {fileID: 3079508200201733127}
+  playerOnePrefab: {fileID: 0}
+  playerTwoPrefab: {fileID: 0}
   powerUpSpawner: {fileID: 0}
   playerOneGoal: {fileID: 0}
   playerTwoGoal: {fileID: 0}
@@ -279,10 +279,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4806292760961133503}
     m_Modifications:
-    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
-      propertyPath: diameter
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 5122904670591779585, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -535,7 +531,7 @@ PrefabInstance:
       objectReference: {fileID: -6641876406011291426, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: isAI
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: speed
@@ -630,17 +626,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
---- !u!114 &3079508200201733127 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
-  m_PrefabInstance: {fileID: 3191906328668196232}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b18fd09aac1dfc47bf9f26dcc9286e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player
 --- !u!4 &5193728335158701666 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7230592439794607082, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
@@ -747,7 +732,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: isAI
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: speed
@@ -847,17 +832,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7230592439794607082, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
   m_PrefabInstance: {fileID: 6967273666274774487}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7370083601163371608 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
-  m_PrefabInstance: {fileID: 6967273666274774487}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b18fd09aac1dfc47bf9f26dcc9286e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player
 --- !u!1001 &7399039080155841705
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -5,36 +5,71 @@ namespace Objects
 {
     public class Player : MonoBehaviour
     {
-        public float speed;
-        public float size = 1.5f;
         public InputActionReference up;
         public InputActionReference down;
         public float arenaHeight;
-        public Vector3 startPosition;
+        public float speed = 5f;
+
+        [Header("Appearance")]
+        [SerializeField] private Color playerColor = Color.white; // 👈 Serialized so Inspector shows it
+
+        private Vector3 _startPosition;
+        private SpriteRenderer _childRenderer;
+
+        void Awake()
+        {
+            // Grab the SpriteRenderer from the child
+            _childRenderer = GetComponentInChildren<SpriteRenderer>();
+            ApplyColor();
+        }
+
+        void Start()
+        {
+            _startPosition = transform.localPosition;
+        }
 
         void Update()
         {
-            if (transform.localScale.y != size)
-            {
-                transform.localScale = new Vector3(0.2f, size, 0);
-            }
+            float halfHeight = transform.localScale.y / 2f;
 
-            if (up.action.IsPressed() && transform.localPosition.y + size / 2 < arenaHeight / 2)
+            // Move up
+            if (up.action.IsPressed() && transform.localPosition.y + halfHeight < arenaHeight / 2)
             {
-                float newY = Mathf.Min(arenaHeight / 2, transform.localPosition.y + Time.deltaTime * speed);
+                float newY = Mathf.Min(arenaHeight / 2 - halfHeight, transform.localPosition.y + Time.deltaTime * speed);
                 transform.localPosition = new Vector3(transform.localPosition.x, newY, 0);
             }
 
-            if (down.action.IsPressed() && transform.localPosition.y - size / 2 > -arenaHeight / 2)
+            // Move down
+            if (down.action.IsPressed() && transform.localPosition.y - halfHeight > -arenaHeight / 2)
             {
-                float newY = Mathf.Max(-arenaHeight / 2, transform.localPosition.y - Time.deltaTime * speed);
+                float newY = Mathf.Max(-arenaHeight / 2 + halfHeight, transform.localPosition.y - Time.deltaTime * speed);
                 transform.localPosition = new Vector3(transform.localPosition.x, newY, 0);
             }
         }
-
-        public void ResetPosition()
+        
+        public void Reset()
         {
-            gameObject.transform.position = startPosition;
+            transform.localPosition = _startPosition;
+            ApplyColor();
         }
+
+        private void ApplyColor()
+        {
+            if (_childRenderer != null)
+            {
+                _childRenderer.color = playerColor;
+            }
+        }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            // Update color in editor immediately
+            if (_childRenderer == null)
+                _childRenderer = GetComponentInChildren<SpriteRenderer>();
+
+            ApplyColor();
+        }
+#endif
     }
 }

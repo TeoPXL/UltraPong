@@ -9,45 +9,58 @@ namespace Objects
         public float diameter = 3f;
         private Rigidbody2D _body;
         private Vector2 _velocity;
-        public Vector2 randomnessRange = new Vector2(-1f, 1f);
+        public float launchAngleRange = 60f;
+        private bool _autoLaunch = true; // new flag
 
         protected override void Awake()
         {
             base.Awake();
             _body = GetComponent<Rigidbody2D>();
-        }
 
-        public void ChangeDiameter(float newDiameter)
-        {
-            diameter = newDiameter;
+            transform.position = Vector3.zero;
             transform.GetChild(0).localScale = new Vector3(diameter, diameter, 1);
             GetComponent<CircleCollider2D>().radius = diameter / 2;
+
+            if (_autoLaunch)
+                LaunchBall();
         }
 
-        public void Init() // start de beweging
+        public void SetAutoLaunch(bool autoLaunch)
         {
-            transform.GetChild(0).localScale = new Vector3(diameter, diameter, 1);
-            GetComponent<CircleCollider2D>().radius = diameter / 2;
-            _body.linearVelocity = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * speed;
+            _autoLaunch = autoLaunch;
+            if (!_autoLaunch)
+                _body.linearVelocity = Vector2.zero;
+        }
+
+        public void LaunchBall()
+        {
+            float angle = Random.Range(-launchAngleRange, launchAngleRange) * Mathf.Deg2Rad;
+            int direction = Random.value < 0.5f ? 1 : -1;
+            Vector2 dir = new Vector2(Mathf.Cos(angle) * direction, Mathf.Sin(angle));
+            _body.linearVelocity = dir.normalized * speed;
             _velocity = _body.linearVelocity;
         }
 
-        void OnCollisionEnter2D(Collision2D collision)
+        public void FreezeBall()
         {
-            Vector2 normal = collision.contacts[0].normal;
-            Vector2 reflected = Vector2.Reflect(_velocity, normal);
-            Vector2 randomBoost = new Vector2(Random.Range(randomnessRange.x, randomnessRange.y),
-                Random.Range(randomnessRange.x, randomnessRange.y));
-            _body.linearVelocity = (reflected + randomBoost).normalized * speed;
             _velocity = _body.linearVelocity;
-            Debug.Log(_velocity);
+            _body.linearVelocity = Vector2.zero;
+        }
+
+        public void ResetBall()
+        {
+            transform.position = Vector3.zero;
+            if (_autoLaunch)
+                LaunchBall();
+            else
+                FreezeBall();
         }
 
         public override void OnPause()
         {
             base.OnPause();
             _velocity = _body.linearVelocity;
-            _body.linearVelocity = new Vector2(0, 0);
+            _body.linearVelocity = Vector2.zero;
         }
 
         public override void OnResume()
@@ -55,5 +68,14 @@ namespace Objects
             base.OnResume();
             _body.linearVelocity = _velocity;
         }
+
+        void OnCollisionEnter2D(Collision2D collision)
+        {
+            Vector2 normal = collision.contacts[0].normal;
+            Vector2 reflected = Vector2.Reflect(_velocity, normal);
+            _body.linearVelocity = reflected.normalized * speed;
+            _velocity = _body.linearVelocity;
+        }
     }
+
 }

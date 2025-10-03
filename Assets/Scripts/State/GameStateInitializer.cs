@@ -1,4 +1,5 @@
-﻿using Objects;
+﻿using System.Collections.Generic;
+using Objects;
 using Shared;
 using state;
 using UI;
@@ -9,8 +10,11 @@ namespace State
 {
     public struct Context
     {
-        public BasicArenaScript Arena;
+        public List<Arena> ArenaPrefabs;
+        public Arena MenuBackgroundArena;
+        public ArenaManager ArenaManager; // new reference
     }
+
 
     public class GameStateInitializer : Singleton<GameStateInitializer>
     {
@@ -20,8 +24,12 @@ namespace State
 
         #region References
 
-        [SerializeField] UIManager uiManager;
-        [SerializeField] BasicArenaScript arena;
+        [SerializeField] private UIManager uiManager;
+
+        [Header("Arena Prefabs")]
+        [SerializeField] private List<Arena> arenaPrefabs;           // assign multiple arenas here
+        [SerializeField] private Arena menuBackgroundArena;          // assign menu background arena
+        [SerializeField] private ArenaManager arenaManager;          // assign the ArenaManager in scene
 
         #endregion
 
@@ -37,7 +45,9 @@ namespace State
         {
             _gameStateManager = new GameStateManager(new Context
             {
-                Arena = arena,
+                ArenaPrefabs = arenaPrefabs,
+                MenuBackgroundArena = menuBackgroundArena,
+                ArenaManager = arenaManager
             });
 
             _gameStateManager.OnStateChanged += (p, n) => OnGameStateChanged?.Invoke(p, n);
