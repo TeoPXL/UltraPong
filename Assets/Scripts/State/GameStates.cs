@@ -20,7 +20,7 @@ namespace state
 
         public MenuState(MenuUI prefab)
         {
-            this._prefab = prefab;
+            _prefab = prefab;
         }
 
         public override void Enter()
@@ -67,7 +67,7 @@ namespace state
 
         public IdleState(IdleUI prefab)
         {
-            this._prefab = prefab;
+            _prefab = prefab;
         }
 
         public override void Enter()
@@ -102,7 +102,7 @@ namespace state
 
         public PlayingState(PlayingUI playingUIPrefab)
         {
-            this._playingUIPrefab = playingUIPrefab;
+            _playingUIPrefab = playingUIPrefab;
         }
 
         public override void Enter()
