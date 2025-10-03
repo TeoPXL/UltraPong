@@ -5,6 +5,13 @@ namespace state
 {
     public abstract class State
     {
+        protected readonly GameStateManager GameStateManager;
+
+        protected State(GameStateManager gameStateManager)
+        {
+            this.GameStateManager = gameStateManager;
+        }
+
         public abstract GameState GameState { get; }
         public abstract void Enter();
         public abstract void Tick();
@@ -15,19 +22,19 @@ namespace state
     {
         public override GameState GameState => GameState.Menu;
 
-        private MenuUI prefab;
-        private MenuUI instance;
+        private MenuUI _menuUI;
 
-        public MenuState(MenuUI prefab)
+        public MenuState(GameStateManager gameStateManager, MenuUI menuUI) : base(gameStateManager)
         {
-            this.prefab = prefab;
+            _menuUI = menuUI;
         }
 
         public override void Enter()
         {
-            instance = GameStateManager.Instance.SpawnUI(prefab);
-            instance.OnStartClicked += HandleStart;
-            instance.OnQuitClicked += HandleQuit;
+            Debug.Log("Enter menu");
+            _menuUI.gameObject.SetActive(true);
+            _menuUI.OnStartClicked += HandleStart;
+            _menuUI.OnQuitClicked += HandleQuit;
         }
 
         public override void Tick()
@@ -36,20 +43,18 @@ namespace state
 
         public override void Exit()
         {
-            if (instance != null)
-            {
-                instance.OnStartClicked -= HandleStart;
-                instance.OnQuitClicked -= HandleQuit;
-                GameStateManager.Instance.DestroyUI(instance);
-                instance = null;
-            }
+            
+            Debug.Log("Exit from menu");
+            _menuUI.gameObject.SetActive(false);
+            _menuUI.OnStartClicked -= HandleStart;
+            _menuUI.OnQuitClicked -= HandleQuit;
         }
 
         private void HandleStart()
         {
-            GameStateManager.Instance.ChangeState(
-                new IdleState(GameStateManager.Instance.idleUIPrefab)
-            );
+            Debug.Log("Handlestart for menu");
+            GameStateManager.PopState();
+            GameStateManager.PushState(new IdleState(GameStateManager, UIManager.Instance.idleUIPrefab));
         }
 
         private void HandleQuit()
@@ -61,141 +66,130 @@ namespace state
 
     public class IdleState : State
     {
-        private IdleUI prefab;
-        private IdleUI instance;
+        private IdleUI _idleUI;
         public override GameState GameState => GameState.Idle;
 
-        public IdleState(IdleUI prefab)
+        public IdleState(GameStateManager gameStateManager, IdleUI idleUI) : base(gameStateManager)
         {
-            this.prefab = prefab;
+            _idleUI = idleUI;
         }
 
         public override void Enter()
         {
-            instance = GameStateManager.Instance.SpawnUI(prefab);
-        }
-
-        public override void Tick()
-        {
+            
+            Debug.Log("Enter idle");
+            _idleUI.gameObject.SetActive(true);
+            Play();
         }
 
         public override void Exit()
         {
-            if (instance != null)
-            {
-                GameStateManager.Instance.DestroyUI(instance);
-                instance = null;
-            }
+            
+            Debug.Log("Exit idle");
+            _idleUI.gameObject.SetActive(false);
         }
 
-        public void Tick(float deltaTime)
+        public override void Tick()
         {
             // Do we want to allow pausing while idle? Then keep this
             if (InputUtils.WasPausePressedThisFrame())
             {
-                GameStateManager.Instance.PushState(new PauseState(GameStateManager.Instance.pauseUIPrefab));
+                GameStateManager.PushState(new PauseState(GameStateManager, UIManager.Instance.pauseUIPrefab));
             }
+            
+        }
+        
+        private void Play()
+        {
+            Debug.Log("Go from idle to playing");
+            GameStateManager.PushState(new PlayingState(GameStateManager, UIManager.Instance.playingUIPrefab));
         }
     }
 
     public class PlayingState : State
     {
-        private PlayingUI playingUIPrefab;
-        private PlayingUI playingUIInstance;
+        private PlayingUI _playingUI;
         public override GameState GameState => GameState.Playing;
 
-        public PlayingState(PlayingUI playingUIPrefab)
+        public PlayingState(GameStateManager gameStateManager, PlayingUI playingUI) : base(gameStateManager)
         {
-            this.playingUIPrefab = playingUIPrefab;
+            _playingUI = playingUI;
         }
 
         public override void Enter()
         {
-            playingUIInstance = GameStateManager.Instance.SpawnUI(playingUIPrefab);
-            // Add more UI in the same way
+            _playingUI.gameObject.SetActive(true);
 
             Debug.Log("Playing state");
         }
 
-        public override void Exit()
-        {
-            GameStateManager.Instance.DestroyUI(playingUIInstance);
-            playingUIInstance = null;
-        }
-
         public override void Tick()
         {
-            if (InputUtils.WasPausePressedThisFrame())
-            {
-                GameStateManager.Instance.PushState(new PauseState(GameStateManager.Instance.pauseUIPrefab));
-            }
+        }
+
+        public override void Exit()
+        {
+            _playingUI.gameObject.SetActive(false);
         }
     }
 
     public class PauseState : State
     {
-        private PauseUI prefab;
-        private PauseUI instance;
+        private PauseUI _pauseUI;
         public override GameState GameState => GameState.Paused;
 
-        public PauseState(PauseUI prefab)
+        public PauseState(GameStateManager gameStateManager, PauseUI pauseUI) : base(gameStateManager)
         {
-            this.prefab = prefab;
+            _pauseUI = pauseUI;
         }
 
         public override void Enter()
         {
-            instance = GameStateManager.Instance.SpawnUI(prefab);
-            instance.OnResumeClicked += Resume;
-            instance.OnExitToMenuClicked += ExitToMenu;
+            _pauseUI.gameObject.SetActive(true);
+            _pauseUI.OnResumeClicked += Resume;
+            _pauseUI.OnExitToMenuClicked += ExitToMenu;
         }
 
         public override void Tick()
         {
-            if (InputUtils.WasPausePressedThisFrame())
-            {
-                Resume();
-            }
         }
 
         public override void Exit()
         {
-            if (instance != null)
-            {
-                instance.OnResumeClicked -= Resume;
-                instance.OnExitToMenuClicked -= ExitToMenu;
-
-                GameStateManager.Instance.DestroyUI(instance);
-                instance = null;
-            }
-        }
-
-        public void ShowUI()
-        {
-            instance?.gameObject.SetActive(true);
+            _pauseUI.gameObject.SetActive(false);
+            _pauseUI.OnResumeClicked -= Resume;
+            _pauseUI.OnExitToMenuClicked -= ExitToMenu;
         }
 
         private void Resume()
         {
-            GameStateManager.Instance.PopState();
+            GameStateManager.PopState();
         }
 
         private void ExitToMenu()
         {
             Debug.Log("Exiting to menu");
-            GameStateManager.Instance.ClearAndChangeState(new MenuState(GameStateManager.Instance.menuUIPrefab));
+            GameStateManager.ResetStack();
+            GameStateManager.PushState(new MenuState(GameStateManager, UIManager.Instance.menuUIPrefab));
         }
     }
 
 
     public class WinState : State
     {
+        private WinUI _winUI;
 
         public override GameState GameState => GameState.Win;
+
+        public WinState(GameStateManager gameStateManager, WinUI winUI) : base(gameStateManager)
+        {
+            _winUI = winUI;
+        }
 
         public override void Enter()
         {
             Debug.Log($"Enter win state");
+            _winUI.gameObject.SetActive(true);
         }
 
         public override void Tick()
@@ -205,15 +199,11 @@ namespace state
         public override void Exit()
         {
             Debug.Log("Exiting Win State");
+            _winUI.gameObject.SetActive(false);
+
             Debug.Log("Exiting to menu");
-            GameStateManager.Instance.ClearAndChangeState(new MenuState(GameStateManager.Instance.menuUIPrefab));
+            GameStateManager.ResetStack();
+            GameStateManager.PushState(new MenuState(GameStateManager, UIManager.Instance.menuUIPrefab));
         }
-
-        public void Tick(float deltaTime)
-        {
-            // Probably count the seconds here
-        }
-
     }
-
 }
