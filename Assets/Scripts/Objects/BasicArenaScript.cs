@@ -39,6 +39,7 @@ public class BasicArenaScript : MonoBehaviour
 
     void StartGame() // callen bij start play
     {
+        _ball.speed = 12;
         _ball.Init();
         foreach (Player player in players)
         {

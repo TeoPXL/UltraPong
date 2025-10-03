@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
             float newY = Mathf.Min(arenaHeight / 2, transform.localPosition.y + Time.deltaTime * speed);
             transform.localPosition = new Vector3(transform.localPosition.x, newY, 0);
         }
-        if (down.action.IsPressed() && transform.localPosition.y + size / 2 > -arenaHeight / 2)
+        if (down.action.IsPressed() && transform.localPosition.y - size / 2 > -arenaHeight / 2)
         {
             float newY = Mathf.Max(-arenaHeight / 2, transform.localPosition.y - Time.deltaTime * speed);
             transform.localPosition = new Vector3(transform.localPosition.x, newY, 0);
