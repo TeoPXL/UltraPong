@@ -136,7 +136,7 @@ namespace state
 
         public PauseState(PauseUI prefab)
         {
-            this._prefab = prefab;
+            _prefab = prefab;
         }
 
         public override void Enter()
@@ -186,8 +186,15 @@ namespace state
 
     public class WinState : State
     {
-
+        private WinUI _prefab;
+        private WinUI _instance;
+        
         public override GameState GameState => GameState.Win;
+        
+        public WinState(WinUI prefab)
+        {
+            _prefab = prefab;
+        }
 
         public override void Enter()
         {
@@ -203,11 +210,6 @@ namespace state
             Debug.Log("Exiting Win State");
             Debug.Log("Exiting to menu");
             GameStateManager.Instance.ClearAndChangeState(new MenuState(GameStateManager.Instance.menuUIPrefab));
-        }
-
-        public void Tick(float deltaTime)
-        {
-            // Probably count the seconds here
         }
 
     }
