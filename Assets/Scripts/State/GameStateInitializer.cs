@@ -1,5 +1,4 @@
-﻿using System;
-using Objects;
+﻿using Objects;
 using Shared;
 using state;
 using UI;
@@ -17,6 +16,7 @@ namespace State
     {
         private GameStateManager _gameStateManager;
         public Context Context => _gameStateManager.Context;
+        public GameState CurrentGameState => _gameStateManager.CurrentGameState;
 
         #region References
 
