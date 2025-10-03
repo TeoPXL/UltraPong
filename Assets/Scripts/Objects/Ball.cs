@@ -11,10 +11,16 @@ public class Ball : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Init();
     }
 
-    void Init()
+    public void ChangeDiameter(float newDiameter)
+    {
+        diameter = newDiameter;
+        transform.GetChild(0).localScale = new Vector3(diameter, diameter, 1);
+        GetComponent<CircleCollider2D>().radius = diameter / 2;
+    }
+
+    public void Init() // start de beweging
     {
         transform.GetChild(0).localScale = new Vector3(diameter, diameter, 1);
         GetComponent<CircleCollider2D>().radius = diameter / 2;
