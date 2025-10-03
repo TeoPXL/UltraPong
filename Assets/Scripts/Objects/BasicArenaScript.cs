@@ -23,13 +23,16 @@ namespace Objects
         public InputActionReference down2;
 
         // Scores: index 0 = player1, index 1 = player2
-        private int[] scores = new int[2];
+        private readonly int[] _scores = new int[2];
+
+        public bool isAi = false;
 
         // Event: (playerNumber, newScore) - playerNumber is 1 or 2
         public event Action<int,int> OnScoreChanged;
 
 
-        public void SpawnObjects() // callen bij start idle
+        // callen bij start idle
+        public virtual void SpawnObjects()
         {
             SpawnWalls();
             SpawnGoals();    // spawn goals first so their Goal components are present
@@ -37,11 +40,11 @@ namespace Objects
             SpawnBall();
             
             // reset scores
-            scores[0] = 0;
-            scores[1] = 0;
+            _scores[0] = 0;
+            _scores[1] = 0;
 
             // notify UI
-            OnScoreChanged?.Invoke(scores[0], scores[1]);
+            OnScoreChanged?.Invoke(_scores[0], _scores[1]);
         }
 
         public void StartGame() // callen bij start play
@@ -147,7 +150,7 @@ namespace Objects
         public void ScoreGoal(int playerNumber)
         {
             if (playerNumber < 1 || playerNumber > 2) return;
-            scores[playerNumber - 1]++;
+            _scores[playerNumber - 1]++;
 
             // destroy old ball and respawn
             if (_ball != null)
@@ -159,7 +162,7 @@ namespace Objects
             ResetPlayers();
 
             // notify with both scores
-            OnScoreChanged?.Invoke(scores[0], scores[1]);
+            OnScoreChanged?.Invoke(_scores[0], _scores[1]);
         }
         
         void ResetPlayers()
@@ -200,11 +203,11 @@ namespace Objects
             }
 
             // Reset scores
-            scores[0] = 0;
-            scores[1] = 0;
+            _scores[0] = 0;
+            _scores[1] = 0;
 
             // Notify UI about score reset
-            OnScoreChanged?.Invoke(scores[0], scores[1]);
+            OnScoreChanged?.Invoke(_scores[0], _scores[1]);
         }
 
     }

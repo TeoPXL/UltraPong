@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4806292760961133503}
-  - component: {fileID: 3204245591685985097}
+  - component: {fileID: -437508409564015742}
   m_Layer: 0
-  m_Name: BasicArena
+  m_Name: ColdArena
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,7 +33,7 @@ Transform:
   - {fileID: 2920113399322372680}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3204245591685985097
+--- !u!114 &-437508409564015742
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,21 +42,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 4624773063696786889}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d09405466501ee04ab1b5aab9893c921, type: 3}
+  m_Script: {fileID: 11500000, guid: 37fb3685509bed242ace443439956f16, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BasicArenaScript
+  m_EditorClassIdentifier: Assembly-CSharp::Objects.ColdArenaScript
   height: 8
   width: 16
-  wallPrefab: {fileID: 2460868911928700412, guid: fcb3baf25d29ab945a5e1e59acdb8cf7, type: 3}
-  goalPrefab: {fileID: 2460868911928700412, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
+  wallPrefab: {fileID: 2460868911928700412, guid: 91d166e3cbade0e4faf9c2566af71ad2, type: 3}
   ballPrefab: {fileID: 6877113799783841491, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
-  playerPrefab: {fileID: 1268527654280983118, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
+  playerPrefab: {fileID: 1268527654280983118, guid: f7153568a47dbd04f80fff54a41e312a, type: 3}
   ballDiameter: 0.3
   up1: {fileID: 1832714143519553521, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   down1: {fileID: -3672766125945074209, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   up2: {fileID: -4341562554645556911, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   down2: {fileID: -6641876406011291426, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
-  isAi: 1
+  isAi: 0
+  IceCecilPrefab: {fileID: 3594289686972484191, guid: e00c4990c9040f643a49e2c6ba0421e6, type: 3}
 --- !u!1 &5794257762020023389
 GameObject:
   m_ObjectHideFlags: 0

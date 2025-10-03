@@ -55,5 +55,23 @@ namespace Objects
             base.OnResume();
             _body.linearVelocity = _velocity;
         }
+        public void ApplySlow(float factor, float duration)
+        {
+            StartCoroutine(SlowRoutine(factor, duration));
+        }
+
+        private System.Collections.IEnumerator SlowRoutine(float factor, float duration)
+        {
+            float originalSpeed = speed;
+            speed *= factor;
+
+            _body.linearVelocity = _body.linearVelocity.normalized * speed;
+
+            yield return new WaitForSeconds(duration);
+
+            speed = originalSpeed;
+            _body.linearVelocity = _body.linearVelocity.normalized * speed;
+        }
+
     }
 }
