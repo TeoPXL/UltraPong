@@ -11,6 +11,11 @@ namespace Objects
         private Vector2 _velocity;
         public Vector2 randomnessRange = new Vector2(-1f, 1f);
 
+        protected override void Awake()
+        {
+            base.Awake();
+            _body = GetComponent<Rigidbody2D>();
+        }
 
         public void ChangeDiameter(float newDiameter)
         {
@@ -23,7 +28,6 @@ namespace Objects
         {
             transform.GetChild(0).localScale = new Vector3(diameter, diameter, 1);
             GetComponent<CircleCollider2D>().radius = diameter / 2;
-            _body = GetComponent<Rigidbody2D>();
             _body.linearVelocity = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * speed;
             _velocity = _body.linearVelocity;
         }
