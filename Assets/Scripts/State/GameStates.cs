@@ -15,7 +15,6 @@ namespace state
         public abstract GameState GameState { get; }
         public abstract void Enter();
         public abstract void Tick();
-        public abstract void OnResume();
         public abstract void Exit();
     }
 
@@ -39,10 +38,6 @@ namespace state
         }
 
         public override void Tick()
-        {
-        }
-        
-        public override void OnResume()
         {
         }
 
@@ -93,11 +88,10 @@ namespace state
         {
             _timer += Time.deltaTime;
             
-            Debug.Log("Timer: " + _timer);
             if (_timer >= Delay)
             {
-                Play();
                 _timer = 0f;
+                Play();
             }
 
             if (InputUtils.WasPausePressedThisFrame())
@@ -109,11 +103,6 @@ namespace state
         public override void Exit()
         {
             _idleUI.gameObject.SetActive(false);
-        }
-
-        public override void OnResume()
-        {
-            _timer = 0f;
         }
 
         private void Play()
@@ -142,10 +131,6 @@ namespace state
         }
 
         public override void Tick()
-        {
-        }
-        
-        public override void OnResume()
         {
         }
 
@@ -187,10 +172,6 @@ namespace state
         {
             GameStateManager.PopState();
         }
-        
-        public override void OnResume()
-        {
-        }
 
         private void ExitToMenu()
         {
@@ -219,10 +200,6 @@ namespace state
         }
 
         public override void Tick()
-        {
-        }
-        
-        public override void OnResume()
         {
         }
 
