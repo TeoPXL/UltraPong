@@ -32,11 +32,13 @@ namespace Objects
             SpawnGoals();    // spawn goals first so their Goal components are present
             SpawnPlayers();
             SpawnBall();
-            // reset scores when spawning (idle)
+            
+            // reset scores
             scores[0] = 0;
             scores[1] = 0;
-            OnScoreChanged?.Invoke(1, scores[0]);
-            OnScoreChanged?.Invoke(2, scores[1]);
+
+            // notify UI
+            OnScoreChanged?.Invoke(scores[0], scores[1]);
         }
 
         public void StartGame() // callen bij start play
@@ -142,17 +144,64 @@ namespace Objects
         public void ScoreGoal(int playerNumber)
         {
             if (playerNumber < 1 || playerNumber > 2) return;
-            scores[playerNumber - 1] += 1;
+            scores[playerNumber - 1]++;
 
-            // destroy current ball and respawn new one (paused until StartGame called).
+            // destroy old ball and respawn
             if (_ball != null)
             {
                 Destroy(_ball.gameObject);
                 _ball = null;
             }
             SpawnBall();
+            ResetPlayers();
 
-            OnScoreChanged?.Invoke(playerNumber, scores[playerNumber - 1]);
+            // notify with both scores
+            OnScoreChanged?.Invoke(scores[0], scores[1]);
+        }
+        
+        void ResetPlayers()
+        {
+            if (players == null || players.Length < 2) return;
+
+            // Reset positions to their spawn points
+            players[0].transform.position = new Vector3(-7f, 0f, 0f);
+            players[1].transform.position = new Vector3(7f, 0f, 0f);
+        }
+        
+        public void ResetArena()
+        {
+            // Destroy all children objects in the arena (walls, goals, players, ball)
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+
+            // Also destroy the ball if it’s separately tracked
+            if (_ball != null)
+            {
+                Destroy(_ball.gameObject);
+                _ball = null;
+            }
+
+            // Clear players array
+            if (players != null)
+            {
+                for (int i = 0; i < players.Length; i++)
+                {
+                    if (players[i] != null)
+                    {
+                        Destroy(players[i].gameObject);
+                    }
+                }
+                players = null;
+            }
+
+            // Reset scores
+            scores[0] = 0;
+            scores[1] = 0;
+
+            // Notify UI about score reset
+            OnScoreChanged?.Invoke(scores[0], scores[1]);
         }
 
     }
