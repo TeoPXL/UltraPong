@@ -42,5 +42,8 @@ namespace State
 
             _gameStateManager.PushState(new MenuState(_gameStateManager, UIManager.Instance.menuUIPrefab));
         }
+
+        private void Update() => _gameStateManager.Update();
+        
     }
 }

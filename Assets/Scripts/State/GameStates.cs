@@ -66,7 +66,10 @@ namespace state
 
     public class IdleState : State
     {
-        private IdleUI _idleUI;
+        private readonly IdleUI _idleUI;
+        private float _timer;
+        private const float Delay = 3f;
+
         public override GameState GameState => GameState.Idle;
 
         public IdleState(GameStateManager gameStateManager, IdleUI idleUI) : base(gameStateManager)
@@ -76,35 +79,39 @@ namespace state
 
         public override void Enter()
         {
-            
-            Debug.Log("Enter idle");
+            Debug.Log("Entering Idle state");
             _idleUI.gameObject.SetActive(true);
-            Play();
-        }
-
-        public override void Exit()
-        {
-            
-            Debug.Log("Exit idle");
-            _idleUI.gameObject.SetActive(false);
+            _timer = 0f;
         }
 
         public override void Tick()
         {
-            // Do we want to allow pausing while idle? Then keep this
+            _timer += Time.deltaTime;
+            
+            if (_timer >= Delay)
+            {
+                _timer = 0f;
+                Play();
+            }
+
             if (InputUtils.WasPausePressedThisFrame())
             {
                 GameStateManager.PushState(new PauseState(GameStateManager, UIManager.Instance.pauseUIPrefab));
             }
-            
         }
-        
+
+        public override void Exit()
+        {
+            _idleUI.gameObject.SetActive(false);
+        }
+
         private void Play()
         {
-            Debug.Log("Go from idle to playing");
+            Debug.Log("Going to play");
             GameStateManager.PushState(new PlayingState(GameStateManager, UIManager.Instance.playingUIPrefab));
         }
     }
+
 
     public class PlayingState : State
     {

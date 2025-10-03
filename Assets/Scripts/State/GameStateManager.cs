@@ -51,6 +51,6 @@ namespace state
             while (_stateStack.Count > 0) PopState();
         }
 
-        private void Update() => CurrentState?.Tick();
+        public void Update() => CurrentState?.Tick();
     }
 }
