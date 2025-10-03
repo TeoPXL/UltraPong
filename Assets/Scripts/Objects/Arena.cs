@@ -48,11 +48,6 @@ namespace Objects
 
         public void ResetGame()
         {
-            _playerOneScore = 0;
-            _playerTwoScore = 0;
-            OnScoreChanged?.Invoke(_playerOneScore, _playerTwoScore);
-
-            ballPrefab.SetAutoLaunch(false); // freeze in idle
             ballPrefab.ResetBall();
 
             playerOnePrefab.Reset();
@@ -61,7 +56,7 @@ namespace Objects
 
         public void StartGame()
         {
-            //ballPrefab.Play();
+            ballPrefab.LaunchBall();
             //playerOnePrefab.Play();
             //playerTwoPrefab.Play();
             //powerUpSpawner.Play();

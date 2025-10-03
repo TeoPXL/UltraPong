@@ -144,12 +144,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d09405466501ee04ab1b5aab9893c921, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicArenaScript
-  ballPrefab: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+  ballPrefab: {fileID: 1889964950737124844}
   playerOnePrefab: {fileID: 7370083601163371608}
   playerTwoPrefab: {fileID: 3079508200201733127}
   powerUpSpawner: {fileID: 0}
-  playerOneGoal: {fileID: 0}
-  playerTwoGoal: {fileID: 0}
+  playerOneGoal: {fileID: 8251615289336683322}
+  playerTwoGoal: {fileID: 4239326215882221175}
 --- !u!1 &5703091774333131149
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,8 +280,24 @@ PrefabInstance:
     m_TransformParent: {fileID: 4806292760961133503}
     m_Modifications:
     - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: speed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: diameter
-      value: 2
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: AutoLaunch
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 623985912430517185, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: m_BodyType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 623985912430517185, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: m_Simulated
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5122904670591779585, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: m_LocalPosition.x
@@ -408,37 +424,31 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7733373740168453111, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
+      propertyPath: scoringPlayer
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2460868911928700412, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2372456854044582763}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
---- !u!1 &4320945655809092913 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2460868911928700412, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
-  m_PrefabInstance: {fileID: 1860503496194474189}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2372456854044582763
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4320945655809092913}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7fc6c9aec7994495aa16748dfc1c680e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Objects.Goal
-  scoringPlayer: 0
 --- !u!4 &6253435526974083480 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5699723590624235861, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
   m_PrefabInstance: {fileID: 1860503496194474189}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8251615289336683322 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7733373740168453111, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
+  m_PrefabInstance: {fileID: 1860503496194474189}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fc6c9aec7994495aa16748dfc1c680e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Objects.Goal
 --- !u!1001 &2792391437516026689
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -541,6 +551,10 @@ PrefabInstance:
       propertyPath: speed
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
+      propertyPath: ballTarget
+      value: 
+      objectReference: {fileID: 6811938096750714285}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: targetBall
       value: 
@@ -706,37 +720,31 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7733373740168453111, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
+      propertyPath: scoringPlayer
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2460868911928700412, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 13972698186876276}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
 --- !u!4 &2206225753767963861 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5699723590624235861, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
   m_PrefabInstance: {fileID: 5874781654924017024}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &8332127662809403516 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2460868911928700412, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
+--- !u!114 &4239326215882221175 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7733373740168453111, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
   m_PrefabInstance: {fileID: 5874781654924017024}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &13972698186876276
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8332127662809403516}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7fc6c9aec7994495aa16748dfc1c680e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Objects.Goal
-  scoringPlayer: 0
 --- !u!1001 &6967273666274774487
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -753,6 +761,10 @@ PrefabInstance:
       propertyPath: speed
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
+      propertyPath: ballTarget
+      value: 
+      objectReference: {fileID: 6811938096750714285}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: targetBall
       value: 

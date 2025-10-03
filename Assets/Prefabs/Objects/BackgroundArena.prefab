@@ -279,6 +279,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4806292760961133503}
     m_Modifications:
+    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: speed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: diameter
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5122904670591779585, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -429,7 +437,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fc6c9aec7994495aa16748dfc1c680e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Objects.Goal
-  scoringPlayer: 0
+  scoringPlayer: 1
 --- !u!4 &6253435526974083480 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5699723590624235861, guid: b98f77c26b9da46a99a5c2682f7abd00, type: 3}
@@ -537,6 +545,10 @@ PrefabInstance:
       propertyPath: speed
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
+      propertyPath: ballTarget
+      value: 
+      objectReference: {fileID: 6811938096750714285}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: targetBall
       value: 
@@ -721,7 +733,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fc6c9aec7994495aa16748dfc1c680e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Objects.Goal
-  scoringPlayer: 0
+  scoringPlayer: 2
 --- !u!1001 &6967273666274774487
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -738,6 +750,10 @@ PrefabInstance:
       propertyPath: speed
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
+      propertyPath: ballTarget
+      value: 
+      objectReference: {fileID: 6811938096750714285}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: targetBall
       value: 

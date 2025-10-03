@@ -101,6 +101,7 @@ namespace state
         {
             _idleUI.gameObject.SetActive(false);
             GameStateManager.Context.ArenaManager.CurrentArena.OnScoreChanged -= HandleScoreChanged;
+            GameStateManager.Context.ArenaManager.RemoveCurrentArena();
         }
 
         private void HandleScoreChanged(int p1, int p2) => _idleUI.UpdateScoreText(p1, p2);
@@ -125,6 +126,7 @@ namespace state
             var arena = GameStateManager.Context.ArenaManager.CurrentArena;
             arena.OnScoreChanged += HandleScoreChanged;
             arena.StartGame(); // launches ball
+            arena.ballPrefab.LaunchBall();
         }
 
         public override void Tick()
@@ -135,7 +137,9 @@ namespace state
 
         public override void Exit()
         {
+            var arena = GameStateManager.Context.ArenaManager.CurrentArena;
             _playingUI.gameObject.SetActive(false);
+            arena.ResetGame();
             GameStateManager.Context.ArenaManager.CurrentArena.OnScoreChanged -= HandleScoreChanged;
         }
 
@@ -217,7 +221,6 @@ namespace state
             _timer += Time.deltaTime;
             if (_timer >= Delay)
             {
-                GameStateManager.Context.ArenaManager.RemoveCurrentArena();
                 GameStateManager.ResetStack();
                 GameStateManager.PushState(new MenuState(GameStateManager, UIManager.Instance.menuUIPrefab));
             }

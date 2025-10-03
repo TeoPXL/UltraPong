@@ -5,13 +5,20 @@ namespace Objects
 {
     public class Player : MonoBehaviour
     {
+        [Header("Input")]
         public InputActionReference up;
         public InputActionReference down;
+
+        [Header("Movement")]
         public float arenaHeight;
         public float speed = 5f;
 
         [Header("Appearance")]
-        [SerializeField] private Color playerColor = Color.white; // 👈 Serialized so Inspector shows it
+        [SerializeField] private Color playerColor = Color.white;
+
+        [Header("AI Settings")]
+        public bool isAI = false;
+        public Transform ballTarget; // the ball the AI should track
 
         private Vector3 _startPosition;
         private SpriteRenderer _childRenderer;
@@ -21,50 +28,66 @@ namespace Objects
             // Grab the SpriteRenderer from the child
             _childRenderer = GetComponentInChildren<SpriteRenderer>();
             ApplyColor();
-        }
 
-        void Start()
-        {
-            _startPosition = transform.localPosition;
+            // Capture the starting position in world space
+            _startPosition = transform.position;
         }
 
         void Update()
         {
             float halfHeight = transform.localScale.y / 2f;
+            Vector3 pos = transform.position;
 
-            // Move up
-            if (up.action.IsPressed() && transform.localPosition.y + halfHeight < arenaHeight / 2)
+            if (isAI && ballTarget != null)
             {
-                float newY = Mathf.Min(arenaHeight / 2 - halfHeight, transform.localPosition.y + Time.deltaTime * speed);
-                transform.localPosition = new Vector3(transform.localPosition.x, newY, 0);
+                // Move towards the ball's y position
+                float step = speed * Time.deltaTime;
+
+                if (ballTarget.position.y > pos.y + 0.1f && pos.y + halfHeight < arenaHeight / 2)
+                    pos.y = Mathf.Min(pos.y + step, arenaHeight / 2 - halfHeight);
+                else if (ballTarget.position.y < pos.y - 0.1f && pos.y - halfHeight > -arenaHeight / 2)
+                    pos.y = Mathf.Max(pos.y - step, -arenaHeight / 2 + halfHeight);
+            }
+            else
+            {
+                // Human input movement
+                if (up.action.IsPressed() && pos.y + halfHeight < arenaHeight / 2)
+                    pos.y = Mathf.Min(pos.y + Time.deltaTime * speed, arenaHeight / 2 - halfHeight);
+
+                if (down.action.IsPressed() && pos.y - halfHeight > -arenaHeight / 2)
+                    pos.y = Mathf.Max(pos.y - Time.deltaTime * speed, -arenaHeight / 2 + halfHeight);
             }
 
-            // Move down
-            if (down.action.IsPressed() && transform.localPosition.y - halfHeight > -arenaHeight / 2)
-            {
-                float newY = Mathf.Max(-arenaHeight / 2 + halfHeight, transform.localPosition.y - Time.deltaTime * speed);
-                transform.localPosition = new Vector3(transform.localPosition.x, newY, 0);
-            }
+            transform.position = pos;
         }
-        
+
+        /// <summary>
+        /// Resets player to its starting position and reapplies color.
+        /// </summary>
         public void Reset()
         {
-            transform.localPosition = _startPosition;
+            transform.position = _startPosition;
             ApplyColor();
+        }
+
+        /// <summary>
+        /// Allows Arena or other scripts to explicitly set the start position.
+        /// </summary>
+        public void SetStartPosition(Vector3 position)
+        {
+            _startPosition = position;
+            transform.position = position;
         }
 
         private void ApplyColor()
         {
             if (_childRenderer != null)
-            {
                 _childRenderer.color = playerColor;
-            }
         }
 
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            // Update color in editor immediately
             if (_childRenderer == null)
                 _childRenderer = GetComponentInChildren<SpriteRenderer>();
 
