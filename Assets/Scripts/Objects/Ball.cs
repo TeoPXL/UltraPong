@@ -1,4 +1,5 @@
 using Shared;
+using System.Collections;
 using UnityEngine;
 
 namespace Objects
@@ -13,24 +14,21 @@ namespace Objects
         public bool AutoLaunch = true;
 
         [Header("Sounds")]
-        [Tooltip("List of sounds to play on bounce.")]
         public AudioClip[] bounceSounds;
 
         [Header("Camera Shake")]
-        [Tooltip("Reference to the camera shake script.")]
         public SimpleCameraShake cameraShake;
-
-        [Tooltip("Maximum camera shake magnitude.")]
         public float maxShakeMagnitude = 0.5f;
-
-        [Tooltip("Camera shake duration.")]
         public float shakeDuration = 0.2f;
 
         private Rigidbody2D _body;
         private Vector2 _velocity;
         private AudioSource _audioSource;
 
-        private Rigidbody2D Body
+        private Player _lastPlayer; // Track last player to hit the ball
+        private SpriteRenderer _spriteRenderer; // For changing ball color
+
+        public Rigidbody2D Body
         {
             get
             {
@@ -45,15 +43,18 @@ namespace Objects
             base.Awake();
 
             _body = GetComponent<Rigidbody2D>();
+            
+            // Ensure AudioSource exists
             _audioSource = GetComponent<AudioSource>();
             if (_audioSource == null)
                 _audioSource = gameObject.AddComponent<AudioSource>();
+            
+            _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
             transform.position = Vector3.zero;
             transform.GetChild(0).localScale = new Vector3(diameter, diameter, 1);
             GetComponent<CircleCollider2D>().radius = diameter / 2;
 
-            // Auto-find camera shake if not assigned
             if (cameraShake == null)
             {
                 Camera mainCam = Camera.main;
@@ -86,6 +87,9 @@ namespace Objects
         public void ResetBall()
         {
             transform.position = Vector3.zero;
+            _lastPlayer = null;
+            if (_spriteRenderer != null)
+                _spriteRenderer.color = Color.white;
 
             if (AutoLaunch)
                 LaunchBall();
@@ -116,27 +120,68 @@ namespace Objects
             if (player != null)
             {
                 reflected.y += player.VerticalVelocity * 0.2f;
+
+                // Track last player
+                _lastPlayer = player;
+
+                // Change ball color to match player
+                if (_spriteRenderer != null)
+                    _spriteRenderer.color = player.GetComponentInChildren<SpriteRenderer>().color;
             }
 
             Body.linearVelocity = reflected.normalized * speed;
             _velocity = Body.linearVelocity;
 
-            // Play a random bounce sound
+            // Play bounce sound safely
+            PlayBounceSound();
+
+            // Camera shake
+            if (cameraShake != null)
+            {
+                float impactFactor = Mathf.Abs(Vector2.Dot(_velocity.normalized, normal));
+                float shakeAmount = maxShakeMagnitude * impactFactor;
+                StartCoroutine(cameraShake.Shake(shakeDuration, shakeAmount));
+            }
+
+            // Check if hit a powerup
+            IPowerUp powerUp = collision.collider.GetComponent<IPowerUp>();
+            if (powerUp != null)
+            {
+                powerUp.OnPickup(_lastPlayer != null ? _lastPlayer.gameObject : null);
+
+                // Example effect: temporary speed boost
+                StartCoroutine(TemporarySpeedChange(2f, 1.5f)); // 2 seconds, 1.5x speed
+            }
+        }
+
+        // Helper method to safely play bounce sounds
+        private void PlayBounceSound()
+        {
+            if (_audioSource == null)
+            {
+                _audioSource = GetComponent<AudioSource>();
+                if (_audioSource == null)
+                    _audioSource = gameObject.AddComponent<AudioSource>();
+            }
+
             if (bounceSounds != null && bounceSounds.Length > 0)
             {
                 AudioClip clip = bounceSounds[Random.Range(0, bounceSounds.Length)];
                 _audioSource.PlayOneShot(clip);
             }
+        }
 
-            // Trigger camera shake based on collision angle
-            if (cameraShake != null)
-            {
-                // Dead-on hits produce stronger shake
-                float impactFactor = Mathf.Abs(Vector2.Dot(_velocity.normalized, normal));
-                float shakeAmount = maxShakeMagnitude * impactFactor;
+        // Example coroutine for temporary speed change
+        private IEnumerator TemporarySpeedChange(float duration, float multiplier)
+        {
+            float originalSpeed = speed;
+            speed *= multiplier;
+            Body.linearVelocity = Body.linearVelocity.normalized * speed;
 
-                StartCoroutine(cameraShake.Shake(shakeDuration, shakeAmount));
-            }
+            yield return new WaitForSeconds(duration);
+
+            speed = originalSpeed;
+            Body.linearVelocity = Body.linearVelocity.normalized * speed;
         }
     }
 }
