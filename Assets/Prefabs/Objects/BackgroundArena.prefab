@@ -285,8 +285,32 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: diameter
-      value: 1
+      value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: bounceSounds.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: 'bounceSounds.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 7b42b0f3a94a04f87968b9c37cb95613, type: 3}
+    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: 'bounceSounds.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 849d3a48927f74dc7a7a9958482056b2, type: 3}
+    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: 'bounceSounds.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 393580af791dd42f1914dd51b7e5f7ea, type: 3}
+    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: 'bounceSounds.Array.data[3]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 360f733ce96a64c3c84a06fe08d833cc, type: 3}
+    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: 'bounceSounds.Array.data[4]'
+      value: 
+      objectReference: {fileID: 8300000, guid: e18b64faf895e427a961fed9f70db54b, type: 3}
     - target: {fileID: 5122904670591779585, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -543,7 +567,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: speed
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: ballTarget
@@ -748,7 +772,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: speed
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: ballTarget

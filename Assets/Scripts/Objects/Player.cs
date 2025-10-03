@@ -22,15 +22,16 @@ namespace Objects
 
         private Vector3 _startPosition;
         private SpriteRenderer _childRenderer;
+        private float _previousY;
+
+        public float VerticalVelocity { get; private set; } = 0f;
 
         void Awake()
         {
-            // Grab the SpriteRenderer from the child
             _childRenderer = GetComponentInChildren<SpriteRenderer>();
             ApplyColor();
-
-            // Capture the starting position in world space
             _startPosition = transform.position;
+            _previousY = transform.position.y;
         }
 
         void Update()
@@ -40,17 +41,22 @@ namespace Objects
 
             if (isAI && ballTarget != null)
             {
-                // Move towards the ball's y position
                 float step = speed * Time.deltaTime;
 
-                if (ballTarget.position.y > pos.y + 0.1f && pos.y + halfHeight < arenaHeight / 2)
-                    pos.y = Mathf.Min(pos.y + step, arenaHeight / 2 - halfHeight);
-                else if (ballTarget.position.y < pos.y - 0.1f && pos.y - halfHeight > -arenaHeight / 2)
-                    pos.y = Mathf.Max(pos.y - step, -arenaHeight / 2 + halfHeight);
+                // Add slight random offset so AI doesn't perfectly align
+                float randomOffset = Mathf.Sin(Time.time * 2f) * 0.3f; 
+                float targetY = ballTarget.position.y + randomOffset;
+
+                if (Mathf.Abs(targetY - pos.y) > 0.1f)
+                {
+                    if (targetY > pos.y && pos.y + halfHeight < arenaHeight / 2)
+                        pos.y = Mathf.Min(pos.y + step, arenaHeight / 2 - halfHeight);
+                    else if (targetY < pos.y && pos.y - halfHeight > -arenaHeight / 2)
+                        pos.y = Mathf.Max(pos.y - step, -arenaHeight / 2 + halfHeight);
+                }
             }
             else
             {
-                // Human input movement
                 if (up.action.IsPressed() && pos.y + halfHeight < arenaHeight / 2)
                     pos.y = Mathf.Min(pos.y + Time.deltaTime * speed, arenaHeight / 2 - halfHeight);
 
@@ -58,21 +64,20 @@ namespace Objects
                     pos.y = Mathf.Max(pos.y - Time.deltaTime * speed, -arenaHeight / 2 + halfHeight);
             }
 
+            // Update position
             transform.position = pos;
+
+            // Compute vertical velocity for bounce calculations
+            VerticalVelocity = (transform.position.y - _previousY) / Time.deltaTime;
+            _previousY = transform.position.y;
         }
 
-        /// <summary>
-        /// Resets player to its starting position and reapplies color.
-        /// </summary>
         public void Reset()
         {
             transform.position = _startPosition;
             ApplyColor();
         }
 
-        /// <summary>
-        /// Allows Arena or other scripts to explicitly set the start position.
-        /// </summary>
         public void SetStartPosition(Vector3 position)
         {
             _startPosition = position;

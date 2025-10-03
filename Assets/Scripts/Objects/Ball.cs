@@ -12,8 +12,23 @@ namespace Objects
         [Tooltip("If true, ball launches immediately regardless of state.")]
         public bool AutoLaunch = true;
 
+        [Header("Sounds")]
+        [Tooltip("List of sounds to play on bounce.")]
+        public AudioClip[] bounceSounds;
+
+        [Header("Camera Shake")]
+        [Tooltip("Reference to the camera shake script.")]
+        public SimpleCameraShake cameraShake;
+
+        [Tooltip("Maximum camera shake magnitude.")]
+        public float maxShakeMagnitude = 0.5f;
+
+        [Tooltip("Camera shake duration.")]
+        public float shakeDuration = 0.2f;
+
         private Rigidbody2D _body;
         private Vector2 _velocity;
+        private AudioSource _audioSource;
 
         private Rigidbody2D Body
         {
@@ -30,18 +45,31 @@ namespace Objects
             base.Awake();
 
             _body = GetComponent<Rigidbody2D>();
+            _audioSource = GetComponent<AudioSource>();
+            if (_audioSource == null)
+                _audioSource = gameObject.AddComponent<AudioSource>();
 
             transform.position = Vector3.zero;
             transform.GetChild(0).localScale = new Vector3(diameter, diameter, 1);
             GetComponent<CircleCollider2D>().radius = diameter / 2;
 
+            // Auto-find camera shake if not assigned
+            if (cameraShake == null)
+            {
+                Camera mainCam = Camera.main;
+                if (mainCam != null)
+                    cameraShake = mainCam.GetComponent<SimpleCameraShake>();
+
+                if (cameraShake == null)
+                    Debug.LogWarning("No SimpleCameraShake found on the main camera!");
+            }
+
             if (AutoLaunch)
-                LaunchBall(); // immediate launch if auto-launch is true
+                LaunchBall();
         }
 
         public void LaunchBall()
         {
-            Debug.Log("Launching ball");
             float angle = Random.Range(-launchAngleRange, launchAngleRange) * Mathf.Deg2Rad;
             int direction = Random.value < 0.5f ? 1 : -1;
             Vector2 dir = new Vector2(Mathf.Cos(angle) * direction, Mathf.Sin(angle));
@@ -60,9 +88,9 @@ namespace Objects
             transform.position = Vector3.zero;
 
             if (AutoLaunch)
-                LaunchBall(); // immediate launch if auto-launch
+                LaunchBall();
             else
-                FreezeBall(); // stay still
+                FreezeBall();
         }
 
         public override void OnPause()
@@ -82,8 +110,33 @@ namespace Objects
         {
             Vector2 normal = collision.contacts[0].normal;
             Vector2 reflected = Vector2.Reflect(_velocity, normal);
+
+            // Factor in player's vertical velocity if hitting a player
+            Player player = collision.collider.GetComponent<Player>();
+            if (player != null)
+            {
+                reflected.y += player.VerticalVelocity * 0.2f;
+            }
+
             Body.linearVelocity = reflected.normalized * speed;
             _velocity = Body.linearVelocity;
+
+            // Play a random bounce sound
+            if (bounceSounds != null && bounceSounds.Length > 0)
+            {
+                AudioClip clip = bounceSounds[Random.Range(0, bounceSounds.Length)];
+                _audioSource.PlayOneShot(clip);
+            }
+
+            // Trigger camera shake based on collision angle
+            if (cameraShake != null)
+            {
+                // Dead-on hits produce stronger shake
+                float impactFactor = Mathf.Abs(Vector2.Dot(_velocity.normalized, normal));
+                float shakeAmount = maxShakeMagnitude * impactFactor;
+
+                StartCoroutine(cameraShake.Shake(shakeDuration, shakeAmount));
+            }
         }
     }
 }
