@@ -12,6 +12,7 @@ namespace State
     {
         public List<Arena> ArenaPrefabs;
         public Arena MenuBackgroundArena;
+        public Arena SelectedArena;
         public ArenaManager ArenaManager; // new reference
     }
 

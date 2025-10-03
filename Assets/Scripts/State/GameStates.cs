@@ -20,21 +20,27 @@ namespace state
     public class MenuState : State
     {
         public override GameState GameState => GameState.Menu;
-        private MenuUI _menuUI;
 
-        public MenuState(GameStateManager gsm, MenuUI menuUI) : base(gsm) => _menuUI = menuUI;
+        private MenuUI _menuUI;
+        private int _selectedArenaIndex = 0;
+
+        public MenuState(GameStateManager gsm, MenuUI menuUI) : base(gsm)
+        {
+            _menuUI = menuUI;
+        }
 
         public override void Enter()
         {
             _menuUI.gameObject.SetActive(true);
             _menuUI.OnStartClicked += HandleStart;
             _menuUI.OnQuitClicked += HandleQuit;
+            _menuUI.OnArenaSelected += HandleArenaSelected;
 
             var arenaManager = GameStateManager.Context.ArenaManager;
             if (GameStateManager.Context.MenuBackgroundArena != null)
             {
                 var arena = arenaManager.SpawnArena(GameStateManager.Context.MenuBackgroundArena);
-                arena.ballPrefab.LaunchBall(); // menu ball moves immediately
+                arena.ballPrefab.LaunchBall();
             }
         }
 
@@ -45,16 +51,28 @@ namespace state
             _menuUI.gameObject.SetActive(false);
             _menuUI.OnStartClicked -= HandleStart;
             _menuUI.OnQuitClicked -= HandleQuit;
+            _menuUI.OnArenaSelected -= HandleArenaSelected;
+
             GameStateManager.Context.ArenaManager.RemoveCurrentArena();
         }
 
         private void HandleStart()
         {
+            if (_selectedArenaIndex >= 0 && _selectedArenaIndex < GameStateManager.Context.ArenaPrefabs.Count)
+            {
+                GameStateManager.Context.SelectedArena = GameStateManager.Context.ArenaPrefabs[_selectedArenaIndex];
+            }
+
             GameStateManager.PopState();
             GameStateManager.PushState(new IdleState(GameStateManager, UIManager.Instance.idleUIPrefab));
         }
 
         private void HandleQuit() => Application.Quit();
+
+        private void HandleArenaSelected(int index)
+        {
+            _selectedArenaIndex = index;
+        }
     }
     #endregion
 
@@ -62,11 +80,15 @@ namespace state
     public class IdleState : State
     {
         public override GameState GameState => GameState.Idle;
+
         private readonly IdleUI _idleUI;
         private float _timer;
         private const float Delay = 3f;
 
-        public IdleState(GameStateManager gsm, IdleUI idleUI) : base(gsm) => _idleUI = idleUI;
+        public IdleState(GameStateManager gsm, IdleUI idleUI) : base(gsm)
+        {
+            _idleUI = idleUI;
+        }
 
         public override void Enter()
         {
@@ -74,13 +96,14 @@ namespace state
             _timer = 0f;
 
             var arenaManager = GameStateManager.Context.ArenaManager;
+
             if (arenaManager.CurrentArena == null)
             {
-                var prefab = GameStateManager.Context.ArenaPrefabs[0];
+                var prefab = GameStateManager.Context.SelectedArena ?? GameStateManager.Context.ArenaPrefabs[0];
                 arenaManager.SpawnArena(prefab);
             }
 
-            arenaManager.CurrentArena.ResetGame(); // freeze ball
+            arenaManager.CurrentArena.ResetGame();
             arenaManager.CurrentArena.OnScoreChanged += HandleScoreChanged;
         }
 
@@ -100,7 +123,8 @@ namespace state
         public override void Exit()
         {
             _idleUI.gameObject.SetActive(false);
-            GameStateManager.Context.ArenaManager.CurrentArena.OnScoreChanged -= HandleScoreChanged;
+            var arena = GameStateManager.Context.ArenaManager.CurrentArena;
+            arena.OnScoreChanged -= HandleScoreChanged;
             GameStateManager.Context.ArenaManager.RemoveCurrentArena();
         }
 
@@ -117,7 +141,10 @@ namespace state
         private PlayingUI _playingUI;
         private const int WinScore = 5;
 
-        public PlayingState(GameStateManager gsm, PlayingUI playingUI) : base(gsm) => _playingUI = playingUI;
+        public PlayingState(GameStateManager gsm, PlayingUI playingUI) : base(gsm)
+        {
+            _playingUI = playingUI;
+        }
 
         public override void Enter()
         {
@@ -125,7 +152,7 @@ namespace state
 
             var arena = GameStateManager.Context.ArenaManager.CurrentArena;
             arena.OnScoreChanged += HandleScoreChanged;
-            arena.StartGame(); // launches ball
+            arena.StartGame();
             arena.ballPrefab.LaunchBall();
         }
 
@@ -137,10 +164,10 @@ namespace state
 
         public override void Exit()
         {
-            var arena = GameStateManager.Context.ArenaManager.CurrentArena;
             _playingUI.gameObject.SetActive(false);
+            var arena = GameStateManager.Context.ArenaManager.CurrentArena;
             arena.ResetGame();
-            GameStateManager.Context.ArenaManager.CurrentArena.OnScoreChanged -= HandleScoreChanged;
+            arena.OnScoreChanged -= HandleScoreChanged;
         }
 
         private void HandleScoreChanged(int p1, int p2)
@@ -150,7 +177,7 @@ namespace state
             else if (p2 >= WinScore)
                 GameStateManager.PushState(new WinState(GameStateManager, UIManager.Instance.winUIPrefab, 2));
             else
-                GameStateManager.PopState(); // back to Idle
+                GameStateManager.PopState();
         }
     }
     #endregion
