@@ -84,6 +84,7 @@ namespace state
             GameStateManager.Context.Arena.SpawnObjects();
             _idleUI.gameObject.SetActive(true);
             _timer = 0f;
+            GameStateManager.Context.Arena.OnScoreChanged += HandleScoreChanged;
         }
 
         public override void Tick()
@@ -105,6 +106,12 @@ namespace state
         public override void Exit()
         {
             _idleUI.gameObject.SetActive(false);
+            GameStateManager.Context.Arena.OnScoreChanged -= HandleScoreChanged;
+        }
+
+        private void HandleScoreChanged(int scorePlayerOne, int scorePlayerTwo)
+        {
+            _idleUI.UpdateScoreText(scorePlayerOne, scorePlayerTwo);
         }
 
         private void Play()
@@ -120,6 +127,8 @@ namespace state
         private PlayingUI _playingUI;
         public override GameState GameState => GameState.Playing;
 
+        private const int WinScore = 5;
+
         public PlayingState(GameStateManager gameStateManager, PlayingUI playingUI) : base(gameStateManager)
         {
             _playingUI = playingUI;
@@ -128,6 +137,10 @@ namespace state
         public override void Enter()
         {
             _playingUI.gameObject.SetActive(true);
+
+            // subscribe to arena score events
+            GameStateManager.Context.Arena.OnScoreChanged += HandleScoreChanged;
+
             GameStateManager.Context.Arena.StartGame();
             Debug.Log("Playing state");
         }
@@ -145,7 +158,28 @@ namespace state
         public override void Exit()
         {
             _playingUI.gameObject.SetActive(false);
+            GameStateManager.Context.Arena.OnScoreChanged -= HandleScoreChanged;
         }
+
+        private void HandleScoreChanged(int scorePlayerOne, int scorePlayerTwo)
+        {
+            Debug.Log($"Scores updated: {scorePlayerOne} – {scorePlayerTwo}");
+
+            if (scorePlayerOne >= WinScore)
+            {
+                GameStateManager.PushState(new WinState(GameStateManager, UIManager.Instance.winUIPrefab, 1));
+                return;
+            }
+            if (scorePlayerTwo >= WinScore)
+            {
+                GameStateManager.PushState(new WinState(GameStateManager, UIManager.Instance.winUIPrefab, 2));
+                return;
+            }
+
+            // Normal goal -> back to Idle
+            GameStateManager.PopState();
+        }
+
     }
 
     public class PauseState : State
@@ -199,32 +233,51 @@ namespace state
     public class WinState : State
     {
         private WinUI _winUI;
+        private int _winner;
+        private float _timer;
+        private const float Delay = 3f;
 
         public override GameState GameState => GameState.Win;
 
-        public WinState(GameStateManager gameStateManager, WinUI winUI) : base(gameStateManager)
+        public WinState(GameStateManager gameStateManager, WinUI winUI, int playerNumber) : base(gameStateManager)
         {
             _winUI = winUI;
+            _winner =  playerNumber;
         }
 
         public override void Enter()
         {
             Debug.Log($"Enter win state");
+            _winUI.UpdateWinText(_winner);
+            _timer = 0f;
             _winUI.gameObject.SetActive(true);
         }
 
         public override void Tick()
         {
+            _timer += Time.deltaTime;
+
+            if (_timer >= Delay)
+            {
+                _timer = 0f;
+                Reset();
+            }
         }
 
-        public override void Exit()
+        public void Reset()
         {
             Debug.Log("Exiting Win State");
             _winUI.gameObject.SetActive(false);
+            GameStateManager.Context.Arena.ResetArena();
+            _timer = 0f;
 
             Debug.Log("Exiting to menu");
             GameStateManager.ResetStack();
             GameStateManager.PushState(new MenuState(GameStateManager, UIManager.Instance.menuUIPrefab));
+        }
+
+        public override void Exit()
+        {
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Objects
 {
     public class Ball : PausableBehaviour
     {
-        public float speed;
+        public float speed = 0.5f;
         public float diameter = 3f;
         private Rigidbody2D _body;
         private Vector2 _velocity;
