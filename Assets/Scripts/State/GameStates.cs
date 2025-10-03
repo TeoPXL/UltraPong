@@ -1,3 +1,4 @@
+using Shared;
 using UI;
 using UnityEngine;
 
@@ -133,6 +134,12 @@ namespace state
 
         public override void Tick()
         {
+            if (InputManager.Instance.pauseAction.action.WasPressedThisFrame()) HandlePause();
+        }
+
+        private void HandlePause()
+        {
+            GameStateManager.PushState(new PauseState(GameStateManager, UIManager.Instance.pauseUIPrefab));
         }
 
         public override void Exit()
@@ -160,6 +167,12 @@ namespace state
 
         public override void Tick()
         {
+            if (InputManager.Instance.pauseAction.action.WasPressedThisFrame()) HandleUnPause();
+        }
+
+        private void HandleUnPause()
+        {
+            GameStateManager.PopState();
         }
 
         public override void Exit()
