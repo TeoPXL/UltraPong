@@ -43,7 +43,6 @@ namespace state
 
         public override void Exit()
         {
-            
             Debug.Log("Exit from menu");
             _menuUI.gameObject.SetActive(false);
             _menuUI.OnStartClicked -= HandleStart;
@@ -80,6 +79,8 @@ namespace state
         public override void Enter()
         {
             Debug.Log("Entering Idle state");
+
+            GameStateManager.Context.Arena.SpawnObjects();
             _idleUI.gameObject.SetActive(true);
             _timer = 0f;
         }
@@ -87,7 +88,7 @@ namespace state
         public override void Tick()
         {
             _timer += Time.deltaTime;
-            
+
             if (_timer >= Delay)
             {
                 _timer = 0f;
@@ -126,7 +127,7 @@ namespace state
         public override void Enter()
         {
             _playingUI.gameObject.SetActive(true);
-
+            GameStateManager.Context.Arena.StartGame();
             Debug.Log("Playing state");
         }
 

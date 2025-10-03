@@ -1,4 +1,5 @@
 ﻿using System;
+using Objects;
 using Shared;
 using state;
 using UI;
@@ -9,6 +10,7 @@ namespace State
 {
     public struct Context
     {
+        public BasicArenaScript Arena;
     }
 
     public class GameStateInitializer : Singleton<GameStateInitializer>
@@ -19,6 +21,7 @@ namespace State
         #region References
 
         [SerializeField] UIManager uiManager;
+        [SerializeField] BasicArenaScript arena;
 
         #endregion
 
@@ -34,6 +37,7 @@ namespace State
         {
             _gameStateManager = new GameStateManager(new Context
             {
+                Arena = arena,
             });
 
             _gameStateManager.OnStateChanged += (p, n) => OnGameStateChanged?.Invoke(p, n);
@@ -44,6 +48,5 @@ namespace State
         }
 
         private void Update() => _gameStateManager.Update();
-        
     }
 }
