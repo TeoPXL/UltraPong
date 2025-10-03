@@ -97,10 +97,7 @@ namespace state
                 Play();
             }
 
-            if (InputUtils.WasPausePressedThisFrame())
-            {
-                GameStateManager.PushState(new PauseState(GameStateManager, UIManager.Instance.pauseUIPrefab));
-            }
+            if (InputManager.Instance.pauseAction.action.WasPressedThisFrame()) HandlePause();
         }
 
         public override void Exit()
@@ -118,6 +115,11 @@ namespace state
         {
             Debug.Log("Going to play");
             GameStateManager.PushState(new PlayingState(GameStateManager, UIManager.Instance.playingUIPrefab));
+        }
+
+        private void HandlePause()
+        {
+            GameStateManager.PushState(new PauseState(GameStateManager, UIManager.Instance.pauseUIPrefab));
         }
     }
 
@@ -170,6 +172,7 @@ namespace state
                 GameStateManager.PushState(new WinState(GameStateManager, UIManager.Instance.winUIPrefab, 1));
                 return;
             }
+
             if (scorePlayerTwo >= WinScore)
             {
                 GameStateManager.PushState(new WinState(GameStateManager, UIManager.Instance.winUIPrefab, 2));
@@ -179,7 +182,6 @@ namespace state
             // Normal goal -> back to Idle
             GameStateManager.PopState();
         }
-
     }
 
     public class PauseState : State
@@ -242,7 +244,7 @@ namespace state
         public WinState(GameStateManager gameStateManager, WinUI winUI, int playerNumber) : base(gameStateManager)
         {
             _winUI = winUI;
-            _winner =  playerNumber;
+            _winner = playerNumber;
         }
 
         public override void Enter()

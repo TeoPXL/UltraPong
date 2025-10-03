@@ -16,32 +16,28 @@ namespace Objects
         public GameObject playerPrefab;
         public float ballDiameter = 0.3f;
         private Ball _ball;
-        private Player[] _players;
-        public InputActionReference up1;
-        public InputActionReference down1;
-        public InputActionReference up2;
-        public InputActionReference down2;
+        private Player[] _players = new Player[2];
 
         // Scores: index 0 = player1, index 1 = player2
-        private int[] scores = new int[2];
+        private readonly int[] _scores = new int[2];
 
         // Event: (playerNumber, newScore) - playerNumber is 1 or 2
-        public event Action<int,int> OnScoreChanged;
+        public event Action<int, int> OnScoreChanged;
 
 
         public void SpawnObjects() // callen bij start idle
         {
             SpawnWalls();
-            SpawnGoals();    // spawn goals first so their Goal components are present
+            SpawnGoals(); // spawn goals first so their Goal components are present
             SpawnPlayers();
             SpawnBall();
-            
+
             // reset scores
-            scores[0] = 0;
-            scores[1] = 0;
+            _scores[0] = 0;
+            _scores[1] = 0;
 
             // notify UI
-            OnScoreChanged?.Invoke(scores[0], scores[1]);
+            OnScoreChanged?.Invoke(_scores[0], _scores[1]);
         }
 
         public void StartGame() // callen bij start play
@@ -124,30 +120,38 @@ namespace Objects
 
         void SpawnPlayers()
         {
-            _players = new Player[2];
+            Player player1 = InstantiatePlayerAtPosition(new Vector3(-7f, 0f, 0f));
+            SetPlayerMovement(player1, InputManager.Instance.playerOneUp, InputManager.Instance.playerOneDown);
+            _players[0] = player1;
 
-            GameObject player1 = Instantiate(playerPrefab);
-            player1.transform.position = new Vector3(-7f, 0f, 0f);
-            player1.GetComponent<Player>().arenaHeight = height;
-            Player p1Script = player1.GetComponent<Player>();
-            p1Script.up = InputManager.Instance.playerOneUp;
-            p1Script.down = InputManager.Instance.playerOneDown;
-            _players[0] = p1Script;
+            Player player2 = InstantiatePlayerAtPosition(new Vector3(7f, 0f, 0f));
+            SetPlayerMovement(player2, InputManager.Instance.playerTwoUp, InputManager.Instance.playerTwoDown);
+            _players[1] = player2;
+        }
 
-            GameObject player2 = Instantiate(playerPrefab);
-            player2.transform.position = new Vector3(7f, 0f, 0f);
-            player2.GetComponent<Player>().arenaHeight = height;
-            Player p2Script = player2.GetComponent<Player>();
-            p2Script.up = InputManager.Instance.playerTwoUp;
-            p2Script.down = InputManager.Instance.playerTwoDown;
-            _players[1] = p2Script;
+        private Player InstantiatePlayerAtPosition(Vector3 position)
+        {
+            GameObject player = Instantiate(playerPrefab);
+            player.transform.position = position;
+            Player pScript = player.GetComponent<Player>();
+            pScript.arenaHeight = height;
+            pScript.startPosition = position;
+            return pScript;
+        }
+
+        private void SetPlayerMovement(Player player, InputActionReference upAction, InputActionReference downAction)
+        {
+            if (player == null) return;
+
+            player.up = upAction;
+            player.down = downAction;
         }
 
         // Called by a Goal when the ball enters. playerNumber is 1 or 2.
         public void ScoreGoal(int playerNumber)
         {
             if (playerNumber < 1 || playerNumber > 2) return;
-            scores[playerNumber - 1]++;
+            _scores[playerNumber - 1]++;
 
             // destroy old ball and respawn
             if (_ball != null)
@@ -155,22 +159,22 @@ namespace Objects
                 Destroy(_ball.gameObject);
                 _ball = null;
             }
+
             SpawnBall();
             ResetPlayers();
 
             // notify with both scores
-            OnScoreChanged?.Invoke(scores[0], scores[1]);
+            OnScoreChanged?.Invoke(_scores[0], _scores[1]);
         }
-        
+
         void ResetPlayers()
         {
-            if (_players == null || _players.Length < 2) return;
-
-            // Reset positions to their spawn points
-            _players[0].transform.position = new Vector3(-7f, 0f, 0f);
-            _players[1].transform.position = new Vector3(7f, 0f, 0f);
+            foreach (Player player in _players)
+            {
+                if (player != null) player.ResetPosition();
+            }
         }
-        
+
         public void ResetArena()
         {
             // Destroy all children objects in the arena (walls, goals, players, ball)
@@ -196,16 +200,16 @@ namespace Objects
                         Destroy(_players[i].gameObject);
                     }
                 }
+
                 _players = null;
             }
 
             // Reset scores
-            scores[0] = 0;
-            scores[1] = 0;
+            _scores[0] = 0;
+            _scores[1] = 0;
 
             // Notify UI about score reset
-            OnScoreChanged?.Invoke(scores[0], scores[1]);
+            OnScoreChanged?.Invoke(_scores[0], _scores[1]);
         }
-
     }
 }
