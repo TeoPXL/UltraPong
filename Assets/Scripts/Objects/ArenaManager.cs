@@ -1,17 +1,18 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Objects
 {
     public class ArenaManager : MonoBehaviour
     {
-        public Transform ArenaParent;
+        [FormerlySerializedAs("ArenaParent")] public Transform arenaParent;
         private Arena _currentArena;
 
         public Arena SpawnArena(Arena prefab)
         {
             RemoveCurrentArena();
 
-            _currentArena = GameObject.Instantiate(prefab, ArenaParent);
+            _currentArena = GameObject.Instantiate(prefab, arenaParent);
             return _currentArena;
         }
 
