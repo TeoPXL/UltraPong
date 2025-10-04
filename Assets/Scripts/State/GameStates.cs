@@ -23,6 +23,7 @@ namespace state
 
         private MenuUI _menuUI;
         private int _selectedArenaIndex = 0;
+        private Arena _backgroundArena;
 
         public MenuState(GameStateManager gsm, MenuUI menuUI) : base(gsm)
         {
@@ -39,12 +40,11 @@ namespace state
             var arenaManager = GameStateManager.Context.ArenaManager;
             if (GameStateManager.Context.MenuBackgroundArena != null)
             {
-                var arena = arenaManager.SpawnArena(GameStateManager.Context.MenuBackgroundArena);
-                arena.ballPrefab.LaunchBall();
+                _backgroundArena = arenaManager.SpawnArena(GameStateManager.Context.MenuBackgroundArena);
+                _backgroundArena.ballPrefab.LaunchBall();
+                _backgroundArena.OnScoreChanged += HandleBackgroundScore; // Subscribe here
             }
         }
-
-        public override void Tick() { }
 
         public override void Exit()
         {
@@ -53,8 +53,25 @@ namespace state
             _menuUI.OnQuitClicked -= HandleQuit;
             _menuUI.OnArenaSelected -= HandleArenaSelected;
 
+            if (_backgroundArena != null)
+                _backgroundArena.OnScoreChanged -= HandleBackgroundScore; // Unsubscribe to avoid leaks
+
             GameStateManager.Context.ArenaManager.RemoveCurrentArena();
         }
+
+        public override void Tick()
+        {
+        }
+
+        private void HandleBackgroundScore(int p1, int p2)
+        {
+            Debug.Log("Handling score bg");
+            if (_backgroundArena == null) return;
+
+            _backgroundArena.ResetGame();          // Reset like in Idle/Playing
+            _backgroundArena.ballPrefab.LaunchBall(); // Keep the background loop going
+        }
+
 
         private void HandleStart()
         {

@@ -144,6 +144,8 @@ MonoBehaviour:
   playerColor: {r: 1, g: 1, b: 1, a: 1}
   isAI: 0
   ballTarget: {fileID: 0}
+  aiDifficulty: 0.85
+  aiSmoothness: 0.15
 --- !u!61 &8164186127414319429
 BoxCollider2D:
   m_ObjectHideFlags: 0

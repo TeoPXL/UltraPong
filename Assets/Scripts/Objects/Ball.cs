@@ -128,6 +128,17 @@ namespace Objects
                 if (_spriteRenderer != null)
                     _spriteRenderer.color = player.GetComponentInChildren<SpriteRenderer>().color;
             }
+            else if (collision.gameObject.name == "WallRectangle")
+            {
+                // Prevent near-horizontal bounces off walls
+                float minVerticalComponent = 0.3f; // Adjust this value (0.2-0.4 works well)
+                
+                if (Mathf.Abs(reflected.y) < minVerticalComponent)
+                {
+                    float sign = reflected.y >= 0 ? 1f : -1f;
+                    reflected.y = minVerticalComponent * sign;
+                }
+            }
 
             Body.linearVelocity = reflected.normalized * speed;
             _velocity = Body.linearVelocity;
