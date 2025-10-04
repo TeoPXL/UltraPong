@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 4806292760961133503}
   - component: {fileID: 3204245591685985097}
   m_Layer: 0
-  m_Name: BasicArena
+  m_Name: BackgroundArena
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -159,7 +159,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4637065543153010375}
-  - component: {fileID: 2217484918324223560}
+  - component: {fileID: 7595366741552124934}
   m_Layer: 0
   m_Name: PowerUpSpawner
   m_TagString: Untagged
@@ -182,7 +182,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4806292760961133503}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2217484918324223560
+--- !u!114 &7595366741552124934
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -196,10 +196,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Objects.PowerUpSpawner
   powerUpPrefabs:
   - {fileID: 6131622819302525784, guid: 26102bda6f9624325b74bd3545e1a6d7, type: 3}
-  - {fileID: 6131622819302525784, guid: 94cb37ff5c16245bfab172682d2cb8e6, type: 3}
   - {fileID: 6131622819302525784, guid: f8120c30ea6554875bdedfa4efe3d954, type: 3}
-  maxPowerUps: 3
-  spawnInterval: 5
+  maxPowerUps: 5
+  spawnInterval: 4
   xRadius: 5
   yRadius: 3.5
 --- !u!1 &5794257762020023389
@@ -309,14 +308,6 @@ PrefabInstance:
       value: 0.35
       objectReference: {fileID: 0}
     - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
-      propertyPath: AutoLaunch
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
-      propertyPath: autoLaunch
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: bounceSounds.Array.size
       value: 5
       objectReference: {fileID: 0}
@@ -340,14 +331,6 @@ PrefabInstance:
       propertyPath: 'bounceSounds.Array.data[4]'
       value: 
       objectReference: {fileID: 8300000, guid: e18b64faf895e427a961fed9f70db54b, type: 3}
-    - target: {fileID: 623985912430517185, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
-      propertyPath: m_BodyType
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 623985912430517185, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
-      propertyPath: m_Simulated
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5122904670591779585, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -594,7 +577,7 @@ PrefabInstance:
       objectReference: {fileID: -6641876406011291426, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: isAI
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: speed
@@ -804,7 +787,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: isAI
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 501994680720525711, guid: f811ebf1606e6644a9fe269046235fea, type: 3}
       propertyPath: speed

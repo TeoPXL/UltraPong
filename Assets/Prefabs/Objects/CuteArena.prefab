@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4853493831098619734}
   - component: {fileID: 1526691393988679666}
   m_Layer: 0
-  m_Name: arena1_bg
+  m_Name: arena3_bg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,12 +79,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d2c2dc1d904d042ed8a2dc40be157d1e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cc84dcb724bc2402aa6bbc4b6e525862, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 20.33, y: 14.4}
+  m_Size: {x: 18, y: 10.36}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 4806292760961133503}
   - component: {fileID: 3204245591685985097}
   m_Layer: 0
-  m_Name: BasicArena
+  m_Name: CuteArena
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -195,9 +195,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Objects.PowerUpSpawner
   powerUpPrefabs:
-  - {fileID: 6131622819302525784, guid: 26102bda6f9624325b74bd3545e1a6d7, type: 3}
-  - {fileID: 6131622819302525784, guid: 94cb37ff5c16245bfab172682d2cb8e6, type: 3}
-  - {fileID: 6131622819302525784, guid: f8120c30ea6554875bdedfa4efe3d954, type: 3}
+  - {fileID: 6131622819302525784, guid: c162b9fa36d66498d9379f58c3ca0059, type: 3}
+  - {fileID: 6131622819302525784, guid: 67a2cf082ba7f45c7a8af06496a98694, type: 3}
+  - {fileID: 6131622819302525784, guid: 038a5ffb1675e49598e2068d6f4cda5e, type: 3}
   maxPowerUps: 3
   spawnInterval: 5
   xRadius: 5
@@ -317,6 +317,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: originalColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: originalColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: originalColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: bounceSounds.Array.size
       value: 5
       objectReference: {fileID: 0}
@@ -347,6 +359,18 @@ PrefabInstance:
     - target: {fileID: 623985912430517185, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: m_Simulated
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3804925877255626691, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3804925877255626691, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3804925877255626691, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: m_Color.r
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5122904670591779585, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: m_LocalPosition.x
@@ -564,6 +588,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5699723590624235861, guid: fcb3baf25d29ab945a5e1e59acdb8cf7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6180147029115284465, guid: fcb3baf25d29ab945a5e1e59acdb8cf7, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6180147029115284465, guid: fcb3baf25d29ab945a5e1e59acdb8cf7, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6180147029115284465, guid: fcb3baf25d29ab945a5e1e59acdb8cf7, type: 3}
+      propertyPath: m_Color.r
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -985,6 +1021,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5699723590624235861, guid: fcb3baf25d29ab945a5e1e59acdb8cf7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6180147029115284465, guid: fcb3baf25d29ab945a5e1e59acdb8cf7, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6180147029115284465, guid: fcb3baf25d29ab945a5e1e59acdb8cf7, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6180147029115284465, guid: fcb3baf25d29ab945a5e1e59acdb8cf7, type: 3}
+      propertyPath: m_Color.r
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

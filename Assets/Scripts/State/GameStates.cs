@@ -1,17 +1,14 @@
 using Shared;
 using UI;
 using UnityEngine;
+using Objects;
 
 namespace state
 {
     public abstract class State
     {
         protected readonly GameStateManager GameStateManager;
-
-        protected State(GameStateManager gameStateManager)
-        {
-            this.GameStateManager = gameStateManager;
-        }
+        protected State(GameStateManager gameStateManager) => GameStateManager = gameStateManager;
 
         public abstract GameState GameState { get; }
         public abstract void Enter();
@@ -19,119 +16,160 @@ namespace state
         public abstract void Exit();
     }
 
+    #region MenuState
     public class MenuState : State
     {
         public override GameState GameState => GameState.Menu;
 
         private MenuUI _menuUI;
+        private int _selectedArenaIndex = 0;
+        private Arena _backgroundArena;
 
-        public MenuState(GameStateManager gameStateManager, MenuUI menuUI) : base(gameStateManager)
+        public MenuState(GameStateManager gsm, MenuUI menuUI) : base(gsm)
         {
             _menuUI = menuUI;
         }
 
         public override void Enter()
         {
-            Debug.Log("Enter menu");
             _menuUI.gameObject.SetActive(true);
             _menuUI.OnStartClicked += HandleStart;
             _menuUI.OnQuitClicked += HandleQuit;
+            _menuUI.OnArenaSelected += HandleArenaSelected;
+            _menuUI.OnToggleAIChanged += HandleToggleAI;
+
+            var arenaManager = GameStateManager.Context.ArenaManager;
+            if (GameStateManager.Context.MenuBackgroundArena != null)
+            {
+                _backgroundArena = arenaManager.SpawnArena(GameStateManager.Context.MenuBackgroundArena);
+                _backgroundArena.ballPrefab.LaunchBall();
+                _backgroundArena.OnScoreChanged += HandleBackgroundScore; // Subscribe here
+            }
+        }
+
+        public override void Exit()
+        {
+            _menuUI.gameObject.SetActive(false);
+            _menuUI.OnStartClicked -= HandleStart;
+            _menuUI.OnQuitClicked -= HandleQuit;
+            _menuUI.OnArenaSelected -= HandleArenaSelected;
+
+            if (_backgroundArena != null)
+                _backgroundArena.OnScoreChanged -= HandleBackgroundScore; // Unsubscribe to avoid leaks
+
+            GameStateManager.Context.ArenaManager.RemoveCurrentArena();
         }
 
         public override void Tick()
         {
         }
 
-        public override void Exit()
+        private void HandleBackgroundScore(int p1, int p2)
         {
-            Debug.Log("Exit from menu");
-            _menuUI.gameObject.SetActive(false);
-            _menuUI.OnStartClicked -= HandleStart;
-            _menuUI.OnQuitClicked -= HandleQuit;
+            Debug.Log("Handling score bg");
+            if (_backgroundArena == null) return;
+
+            _backgroundArena.ResetGame();          // Reset like in Idle/Playing
+            _backgroundArena.ballPrefab.LaunchBall(); // Keep the background loop going
+        }
+        
+        private void HandleToggleAI(bool useAI)
+        {
+            Debug.Log($"Handling toggle ai {useAI}");
+            GameStateManager.Context.PlayerTwoUsesAI = useAI;
         }
 
         private void HandleStart()
         {
-            Debug.Log("Handlestart for menu");
+            if (_selectedArenaIndex >= 0 && _selectedArenaIndex < GameStateManager.Context.ArenaPrefabs.Count)
+            {
+                GameStateManager.Context.SelectedArena = GameStateManager.Context.ArenaPrefabs[_selectedArenaIndex];
+            }
+
             GameStateManager.PopState();
             GameStateManager.PushState(new IdleState(GameStateManager, UIManager.Instance.idleUIPrefab));
         }
 
-        private void HandleQuit()
+        private void HandleQuit() => Application.Quit();
+
+        private void HandleArenaSelected(int index)
         {
-            Application.Quit();
+            _selectedArenaIndex = index;
         }
     }
+    #endregion
 
-
+    #region IdleState
     public class IdleState : State
     {
+        public override GameState GameState => GameState.Idle;
+
         private readonly IdleUI _idleUI;
         private float _timer;
         private const float Delay = 3f;
 
-        public override GameState GameState => GameState.Idle;
-
-        public IdleState(GameStateManager gameStateManager, IdleUI idleUI) : base(gameStateManager)
+        public IdleState(GameStateManager gsm, IdleUI idleUI) : base(gsm)
         {
             _idleUI = idleUI;
         }
 
         public override void Enter()
         {
-            Debug.Log("Entering Idle state");
-
-            GameStateManager.Context.Arena.SpawnObjects();
             _idleUI.gameObject.SetActive(true);
             _timer = 0f;
-            GameStateManager.Context.Arena.OnScoreChanged += HandleScoreChanged;
+
+            var arenaManager = GameStateManager.Context.ArenaManager;
+
+            if (arenaManager.CurrentArena == null)
+            {
+                var prefab = GameStateManager.Context.SelectedArena ?? GameStateManager.Context.ArenaPrefabs[0];
+                arenaManager.SpawnArena(prefab);
+            }
+
+            var arena = arenaManager.CurrentArena;
+            arena.ResetGame();
+
+            // Apply AI setting
+            arena.playerTwoPrefab.isAI = GameStateManager.Context.PlayerTwoUsesAI;
+
+            arena.OnScoreChanged += HandleScoreChanged;
         }
 
         public override void Tick()
         {
             _timer += Time.deltaTime;
-
             if (_timer >= Delay)
             {
                 _timer = 0f;
                 Play();
             }
 
-            if (InputManager.Instance.pauseAction.action.WasPressedThisFrame()) HandlePause();
+            if (InputManager.Instance.pauseAction.action.WasPressedThisFrame())
+                GameStateManager.PushState(new PauseState(GameStateManager, UIManager.Instance.pauseUIPrefab));
         }
 
         public override void Exit()
         {
             _idleUI.gameObject.SetActive(false);
-            GameStateManager.Context.Arena.OnScoreChanged -= HandleScoreChanged;
+            var arena = GameStateManager.Context.ArenaManager.CurrentArena;
+            arena.OnScoreChanged -= HandleScoreChanged;
+            GameStateManager.Context.ArenaManager.RemoveCurrentArena();
         }
 
-        private void HandleScoreChanged(int scorePlayerOne, int scorePlayerTwo)
-        {
-            _idleUI.UpdateScoreText(scorePlayerOne, scorePlayerTwo);
-        }
+        private void HandleScoreChanged(int p1, int p2) => _idleUI.UpdateScoreText(p1, p2);
 
-        private void Play()
-        {
-            Debug.Log("Going to play");
-            GameStateManager.PushState(new PlayingState(GameStateManager, UIManager.Instance.playingUIPrefab));
-        }
-
-        private void HandlePause()
-        {
-            GameStateManager.PushState(new PauseState(GameStateManager, UIManager.Instance.pauseUIPrefab));
-        }
+        private void Play() => GameStateManager.PushState(new PlayingState(GameStateManager, UIManager.Instance.playingUIPrefab));
     }
+    #endregion
 
-
+    #region PlayingState
     public class PlayingState : State
     {
-        private PlayingUI _playingUI;
         public override GameState GameState => GameState.Playing;
-
+        private PlayingUI _playingUI;
         private const int WinScore = 5;
 
-        public PlayingState(GameStateManager gameStateManager, PlayingUI playingUI) : base(gameStateManager)
+        public PlayingState(GameStateManager gsm, PlayingUI playingUI) : base(gsm)
         {
             _playingUI = playingUI;
         }
@@ -140,59 +178,54 @@ namespace state
         {
             _playingUI.gameObject.SetActive(true);
 
-            // subscribe to arena score events
-            GameStateManager.Context.Arena.OnScoreChanged += HandleScoreChanged;
-
-            GameStateManager.Context.Arena.StartGame();
-            Debug.Log("Playing state");
+            var arena = GameStateManager.Context.ArenaManager.CurrentArena;
+            arena.OnScoreChanged += HandleScoreChanged;
+            arena.StartGame();
+            arena.ballPrefab.LaunchBall();
         }
 
         public override void Tick()
         {
-            if (InputManager.Instance.pauseAction.action.WasPressedThisFrame()) HandlePause();
-        }
-
-        private void HandlePause()
-        {
-            GameStateManager.PushState(new PauseState(GameStateManager, UIManager.Instance.pauseUIPrefab));
+            if (InputManager.Instance.pauseAction.action.WasPressedThisFrame())
+                GameStateManager.PushState(new PauseState(GameStateManager, UIManager.Instance.pauseUIPrefab));
         }
 
         public override void Exit()
         {
             _playingUI.gameObject.SetActive(false);
-            GameStateManager.Context.Arena.OnScoreChanged -= HandleScoreChanged;
+            var arena = GameStateManager.Context.ArenaManager.CurrentArena;
+            arena.ResetGame();
+            arena.OnScoreChanged -= HandleScoreChanged;
         }
 
-        private void HandleScoreChanged(int scorePlayerOne, int scorePlayerTwo)
+        private void HandleScoreChanged(int p1, int p2)
         {
-            Debug.Log($"Scores updated: {scorePlayerOne} – {scorePlayerTwo}");
-
-            if (scorePlayerOne >= WinScore)
+            if (p1 >= WinScore)
             {
+                Debug.Log($"Winner is 1");
                 GameStateManager.PushState(new WinState(GameStateManager, UIManager.Instance.winUIPrefab, 1));
-                return;
             }
-
-            if (scorePlayerTwo >= WinScore)
+            else if (p2 >= WinScore)
             {
+                Debug.Log("Winner is 2");
                 GameStateManager.PushState(new WinState(GameStateManager, UIManager.Instance.winUIPrefab, 2));
-                return;
             }
-
-            // Normal goal -> back to Idle
-            GameStateManager.PopState();
+            else
+            {
+                Debug.Log("No winner yet");
+                GameStateManager.PopState();
+            }
         }
     }
+    #endregion
 
+    #region PauseState
     public class PauseState : State
     {
-        private PauseUI _pauseUI;
         public override GameState GameState => GameState.Paused;
+        private PauseUI _pauseUI;
 
-        public PauseState(GameStateManager gameStateManager, PauseUI pauseUI) : base(gameStateManager)
-        {
-            _pauseUI = pauseUI;
-        }
+        public PauseState(GameStateManager gsm, PauseUI pauseUI) : base(gsm) => _pauseUI = pauseUI;
 
         public override void Enter()
         {
@@ -203,12 +236,8 @@ namespace state
 
         public override void Tick()
         {
-            if (InputManager.Instance.pauseAction.action.WasPressedThisFrame()) HandleUnPause();
-        }
-
-        private void HandleUnPause()
-        {
-            GameStateManager.PopState();
+            if (InputManager.Instance.pauseAction.action.WasPressedThisFrame())
+                Resume();
         }
 
         public override void Exit()
@@ -218,68 +247,52 @@ namespace state
             _pauseUI.OnExitToMenuClicked -= ExitToMenu;
         }
 
-        private void Resume()
-        {
-            GameStateManager.PopState();
-        }
+        private void Resume() => GameStateManager.PopState();
 
         private void ExitToMenu()
         {
-            Debug.Log("Exiting to menu");
             GameStateManager.ResetStack();
             GameStateManager.PushState(new MenuState(GameStateManager, UIManager.Instance.menuUIPrefab));
         }
     }
+    #endregion
 
-
+    #region WinState
     public class WinState : State
     {
+        public override GameState GameState => GameState.Win;
         private WinUI _winUI;
         private int _winner;
         private float _timer;
         private const float Delay = 3f;
 
-        public override GameState GameState => GameState.Win;
-
-        public WinState(GameStateManager gameStateManager, WinUI winUI, int playerNumber) : base(gameStateManager)
+        public WinState(GameStateManager gsm, WinUI winUI, int winner) : base(gsm)
         {
             _winUI = winUI;
-            _winner = playerNumber;
+            _winner = winner;
         }
 
         public override void Enter()
         {
-            Debug.Log($"Enter win state");
             _winUI.UpdateWinText(_winner);
-            _timer = 0f;
             _winUI.gameObject.SetActive(true);
+            _timer = 0f;
         }
 
         public override void Tick()
         {
             _timer += Time.deltaTime;
-
             if (_timer >= Delay)
             {
-                _timer = 0f;
-                Reset();
+                GameStateManager.ResetStack();
+                GameStateManager.PushState(new MenuState(GameStateManager, UIManager.Instance.menuUIPrefab));
             }
-        }
-
-        public void Reset()
-        {
-            Debug.Log("Exiting Win State");
-            _winUI.gameObject.SetActive(false);
-            GameStateManager.Context.Arena.ResetArena();
-            _timer = 0f;
-
-            Debug.Log("Exiting to menu");
-            GameStateManager.ResetStack();
-            GameStateManager.PushState(new MenuState(GameStateManager, UIManager.Instance.menuUIPrefab));
         }
 
         public override void Exit()
         {
+            _winUI.gameObject.SetActive(false);
         }
     }
+    #endregion
 }

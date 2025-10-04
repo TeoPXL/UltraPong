@@ -1,4 +1,5 @@
-﻿using Objects;
+﻿using System.Collections.Generic;
+using Objects;
 using Shared;
 using state;
 using UI;
@@ -7,10 +8,15 @@ using UnityEngine.Events;
 
 namespace State
 {
-    public struct Context
+    public class Context
     {
-        public BasicArenaScript Arena;
+        public List<Arena> ArenaPrefabs;
+        public Arena MenuBackgroundArena;
+        public Arena SelectedArena;
+        public ArenaManager ArenaManager;
+        public bool PlayerTwoUsesAI = false;
     }
+
 
     public class GameStateInitializer : Singleton<GameStateInitializer>
     {
@@ -20,8 +26,12 @@ namespace State
 
         #region References
 
-        [SerializeField] UIManager uiManager;
-        [SerializeField] BasicArenaScript arena;
+        [SerializeField] private UIManager uiManager;
+
+        [Header("Arena Prefabs")]
+        [SerializeField] private List<Arena> arenaPrefabs;           // assign multiple arenas here
+        [SerializeField] private Arena menuBackgroundArena;          // assign menu background arena
+        [SerializeField] private ArenaManager arenaManager;          // assign the ArenaManager in scene
 
         #endregion
 
@@ -37,7 +47,9 @@ namespace State
         {
             _gameStateManager = new GameStateManager(new Context
             {
-                Arena = arena,
+                ArenaPrefabs = arenaPrefabs,
+                MenuBackgroundArena = menuBackgroundArena,
+                ArenaManager = arenaManager
             });
 
             _gameStateManager.OnStateChanged += (p, n) => OnGameStateChanged?.Invoke(p, n);
