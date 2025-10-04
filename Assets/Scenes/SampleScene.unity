@@ -1139,7 +1139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7602b521695be439a88c3b2d0f5b7289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Objects.ArenaManager
-  ArenaParent: {fileID: 0}
+  arenaParent: {fileID: 0}
 --- !u!4 &737312582
 Transform:
   m_ObjectHideFlags: 0
