@@ -90,7 +90,11 @@ namespace state
             GameStateManager.PushState(new IdleState(GameStateManager, UIManager.Instance.idleUIPrefab));
         }
 
-        private void HandleQuit() => Application.Quit();
+        private void HandleQuit()
+        { 
+            Debug.Log("Quit game");
+            Application.Quit();
+        } 
 
         private void HandleArenaSelected(int index)
         {
