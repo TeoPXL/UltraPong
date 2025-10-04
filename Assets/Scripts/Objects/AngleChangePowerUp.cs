@@ -12,8 +12,6 @@ namespace Objects
             Ball ball = Object.FindFirstObjectByType<Ball>();
             if (ball != null)
                 ball.StartCoroutine(ApplyAngle(ball));
-
-            Destroy(gameObject);
         }
 
         private IEnumerator ApplyAngle(Ball ball)
@@ -28,8 +26,6 @@ namespace Objects
             ball.Body.linearVelocity = newDir.normalized * ball.speed;
 
             yield return new WaitForSeconds(duration);
-
-            // Optionally: reset angle or leave as is
         }
     }
 }

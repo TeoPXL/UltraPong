@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2947079113304223357}
   - component: {fileID: 5728866978268546427}
-  - component: {fileID: 7497611674946023207}
-  - component: {fileID: 1227803200375143499}
+  - component: {fileID: 5979112747437001567}
+  - component: {fileID: 3316687418065381012}
   m_Layer: 0
-  m_Name: SpeedPowerUp
+  m_Name: SlowDownPowerUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
   m_Color: {r: 0.931641, g: 1, b: 0.5896226, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -92,7 +92,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7497611674946023207
+--- !u!114 &5979112747437001567
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -101,12 +101,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6131622819302525784}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d4b4497816a940acb4595821ea7f1be, type: 3}
+  m_Script: {fileID: 11500000, guid: 7a29ee4d6fef84f0d8a572c25933bd89, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Objects.SpeedUpPowerUp
+  m_EditorClassIdentifier: Assembly-CSharp::Objects.SlowDownPowerUp
   duration: 2
-  speedMultiplier: 1.5
---- !u!60 &1227803200375143499
+  speedMultiplier: 0.5
+--- !u!60 &3316687418065381012
 PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,7 +143,7 @@ PolygonCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.28866667}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -152,7 +152,8 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0, y: 0.5773587}
-      - {x: -0.5, y: -0.28866667}
-      - {x: 0.5, y: -0.28866667}
+    - - {x: -0.5, y: 0.5}
+      - {x: -0.5, y: -0.5}
+      - {x: 0.5, y: -0.5}
+      - {x: 0.5, y: 0.5}
   m_UseDelaunayMesh: 0

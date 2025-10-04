@@ -6,6 +6,7 @@ namespace Objects
 {
     public class Ball : PausableBehaviour
     {
+        [Header("Ball Settings")]
         public float speed = 0.5f;
         public float diameter = 3f;
         public float launchAngleRange = 60f;
@@ -24,9 +25,8 @@ namespace Objects
         private Rigidbody2D _body;
         private Vector2 _velocity;
         private AudioSource _audioSource;
-
-        private Player _lastPlayer; // Track last player to hit the ball
-        private SpriteRenderer _spriteRenderer; // For changing ball color
+        private Player _lastPlayer;
+        private SpriteRenderer _spriteRenderer;
 
         public Rigidbody2D Body
         {
@@ -43,18 +43,19 @@ namespace Objects
             base.Awake();
 
             _body = GetComponent<Rigidbody2D>();
-            
-            // Ensure AudioSource exists
+
             _audioSource = GetComponent<AudioSource>();
             if (_audioSource == null)
                 _audioSource = gameObject.AddComponent<AudioSource>();
-            
+
             _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
+            // Set initial scale and collider
             transform.position = Vector3.zero;
             transform.GetChild(0).localScale = new Vector3(diameter, diameter, 1);
             GetComponent<CircleCollider2D>().radius = diameter / 2;
 
+            // Camera shake reference
             if (cameraShake == null)
             {
                 Camera mainCam = Camera.main;
@@ -88,6 +89,7 @@ namespace Objects
         {
             transform.position = Vector3.zero;
             _lastPlayer = null;
+
             if (_spriteRenderer != null)
                 _spriteRenderer.color = Color.white;
 
@@ -115,16 +117,14 @@ namespace Objects
             Vector2 normal = collision.contacts[0].normal;
             Vector2 reflected = Vector2.Reflect(_velocity, normal);
 
-            // Factor in player's vertical velocity if hitting a player
             Player player = collision.collider.GetComponent<Player>();
             if (player != null)
             {
+                // Apply some vertical influence
                 reflected.y += player.VerticalVelocity * 0.2f;
 
-                // Track last player
                 _lastPlayer = player;
 
-                // Change ball color to match player
                 if (_spriteRenderer != null)
                     _spriteRenderer.color = player.GetComponentInChildren<SpriteRenderer>().color;
             }
@@ -132,37 +132,14 @@ namespace Objects
             Body.linearVelocity = reflected.normalized * speed;
             _velocity = Body.linearVelocity;
 
-            // Play bounce sound safely
             PlayBounceSound();
-
-            // Camera shake
-            if (cameraShake != null)
-            {
-                float impactFactor = Mathf.Abs(Vector2.Dot(_velocity.normalized, normal));
-                float shakeAmount = maxShakeMagnitude * impactFactor;
-                StartCoroutine(cameraShake.Shake(shakeDuration, shakeAmount));
-            }
-
-            // Check if hit a powerup
-            IPowerUp powerUp = collision.collider.GetComponent<IPowerUp>();
-            if (powerUp != null)
-            {
-                powerUp.OnPickup(_lastPlayer != null ? _lastPlayer.gameObject : null);
-
-                // Example effect: temporary speed boost
-                StartCoroutine(TemporarySpeedChange(2f, 1.5f)); // 2 seconds, 1.5x speed
-            }
+            ShakeCamera(normal);
         }
 
-        // Helper method to safely play bounce sounds
         private void PlayBounceSound()
         {
             if (_audioSource == null)
-            {
-                _audioSource = GetComponent<AudioSource>();
-                if (_audioSource == null)
-                    _audioSource = gameObject.AddComponent<AudioSource>();
-            }
+                _audioSource = gameObject.AddComponent<AudioSource>();
 
             if (bounceSounds != null && bounceSounds.Length > 0)
             {
@@ -171,17 +148,14 @@ namespace Objects
             }
         }
 
-        // Example coroutine for temporary speed change
-        private IEnumerator TemporarySpeedChange(float duration, float multiplier)
+        private void ShakeCamera(Vector2 collisionNormal)
         {
-            float originalSpeed = speed;
-            speed *= multiplier;
-            Body.linearVelocity = Body.linearVelocity.normalized * speed;
-
-            yield return new WaitForSeconds(duration);
-
-            speed = originalSpeed;
-            Body.linearVelocity = Body.linearVelocity.normalized * speed;
+            if (cameraShake != null)
+            {
+                float impactFactor = Mathf.Abs(Vector2.Dot(_velocity.normalized, collisionNormal));
+                float shakeAmount = maxShakeMagnitude * impactFactor;
+                StartCoroutine(cameraShake.Shake(shakeDuration, shakeAmount));
+            }
         }
     }
 }

@@ -12,8 +12,6 @@ namespace Objects
             Ball ball = Object.FindFirstObjectByType<Ball>();
             if (ball != null)
                 ball.StartCoroutine(ApplySpeed(ball));
-
-            Destroy(gameObject);
         }
 
         private IEnumerator ApplySpeed(Ball ball)

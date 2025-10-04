@@ -196,6 +196,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Objects.PowerUpSpawner
   powerUpPrefabs:
   - {fileID: 6131622819302525784, guid: 26102bda6f9624325b74bd3545e1a6d7, type: 3}
+  - {fileID: 6131622819302525784, guid: 94cb37ff5c16245bfab172682d2cb8e6, type: 3}
+  - {fileID: 6131622819302525784, guid: f8120c30ea6554875bdedfa4efe3d954, type: 3}
   maxPowerUps: 3
   spawnInterval: 5
   xRadius: 5
