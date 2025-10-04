@@ -6,6 +6,13 @@ namespace Objects
     {
         [Header("PowerUp Settings")]
         public float duration = 2f; // How long the effect lasts
+        public float lifetime = 10f; // How long before the powerup destroys itself if not collected
+
+        private void Start()
+        {
+            // Destroy after lifetime if not picked up
+            Destroy(gameObject, lifetime);
+        }
 
         // Optional spawn behavior
         public virtual void OnSpawn() { }
