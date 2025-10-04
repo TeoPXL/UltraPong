@@ -201,11 +201,20 @@ namespace state
         private void HandleScoreChanged(int p1, int p2)
         {
             if (p1 >= WinScore)
+            {
+                Debug.Log($"Winner is 1");
                 GameStateManager.PushState(new WinState(GameStateManager, UIManager.Instance.winUIPrefab, 1));
+            }
             else if (p2 >= WinScore)
+            {
+                Debug.Log("Winner is 2");
                 GameStateManager.PushState(new WinState(GameStateManager, UIManager.Instance.winUIPrefab, 2));
+            }
             else
+            {
+                Debug.Log("No winner yet");
                 GameStateManager.PopState();
+            }
         }
     }
     #endregion
@@ -280,7 +289,10 @@ namespace state
             }
         }
 
-        public override void Exit() { }
+        public override void Exit()
+        {
+            _winUI.gameObject.SetActive(false);
+        }
     }
     #endregion
 }
