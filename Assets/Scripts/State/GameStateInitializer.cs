@@ -8,12 +8,13 @@ using UnityEngine.Events;
 
 namespace State
 {
-    public struct Context
+    public class Context
     {
         public List<Arena> ArenaPrefabs;
         public Arena MenuBackgroundArena;
         public Arena SelectedArena;
-        public ArenaManager ArenaManager; // new reference
+        public ArenaManager ArenaManager;
+        public bool PlayerTwoUsesAI = false;
     }
 
 

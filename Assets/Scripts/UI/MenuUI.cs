@@ -12,6 +12,7 @@ namespace UI
         public Image arena1Button;
         public Image arena2Button;
         public Image arena3Button;
+        public Toggle toggleAI;
 
         // Events the state code subscribes to
         public event Action OnStartClicked;
@@ -19,6 +20,7 @@ namespace UI
         public event Action<int> OnArenaSelected; // index of selected arena
 
         private Image[] arenaButtons;
+        public event Action<bool> OnToggleAIChanged; // true if AI enabled
 
         private void Awake()
         {
@@ -40,6 +42,11 @@ namespace UI
                         btn.onClick.AddListener(() => SelectArena(index));
                     }
                 }
+            }
+            
+            if (toggleAI != null)
+            {
+                toggleAI.onValueChanged.AddListener(value => OnToggleAIChanged?.Invoke(value));
             }
         }
 

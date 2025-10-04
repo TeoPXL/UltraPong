@@ -36,6 +36,7 @@ namespace state
             _menuUI.OnStartClicked += HandleStart;
             _menuUI.OnQuitClicked += HandleQuit;
             _menuUI.OnArenaSelected += HandleArenaSelected;
+            _menuUI.OnToggleAIChanged += HandleToggleAI;
 
             var arenaManager = GameStateManager.Context.ArenaManager;
             if (GameStateManager.Context.MenuBackgroundArena != null)
@@ -71,7 +72,12 @@ namespace state
             _backgroundArena.ResetGame();          // Reset like in Idle/Playing
             _backgroundArena.ballPrefab.LaunchBall(); // Keep the background loop going
         }
-
+        
+        private void HandleToggleAI(bool useAI)
+        {
+            Debug.Log($"Handling toggle ai {useAI}");
+            GameStateManager.Context.PlayerTwoUsesAI = useAI;
+        }
 
         private void HandleStart()
         {
@@ -120,8 +126,13 @@ namespace state
                 arenaManager.SpawnArena(prefab);
             }
 
-            arenaManager.CurrentArena.ResetGame();
-            arenaManager.CurrentArena.OnScoreChanged += HandleScoreChanged;
+            var arena = arenaManager.CurrentArena;
+            arena.ResetGame();
+
+            // Apply AI setting
+            arena.playerTwoPrefab.isAI = GameStateManager.Context.PlayerTwoUsesAI;
+
+            arena.OnScoreChanged += HandleScoreChanged;
         }
 
         public override void Tick()
@@ -231,7 +242,6 @@ namespace state
 
         private void ExitToMenu()
         {
-            GameStateManager.Context.ArenaManager.RemoveCurrentArena();
             GameStateManager.ResetStack();
             GameStateManager.PushState(new MenuState(GameStateManager, UIManager.Instance.menuUIPrefab));
         }
