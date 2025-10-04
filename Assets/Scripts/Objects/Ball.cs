@@ -27,7 +27,11 @@ namespace Objects
         private Vector2 _velocity;
         private AudioSource _audioSource;
         private Player _lastPlayer;
+        
+        [Header("Visuals")]
+        public Color originalColor = Color.white; // Set this in the inspector
         private SpriteRenderer _spriteRenderer;
+        
         private bool _isFrozen;
         private bool _isPaused;
 
@@ -52,6 +56,10 @@ namespace Objects
                 _audioSource = gameObject.AddComponent<AudioSource>();
 
             _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            
+            // Apply the original color at the start
+            if (_spriteRenderer != null)
+                _spriteRenderer.color = originalColor;
 
             // Set initial scale and collider
             transform.position = Vector3.zero;
@@ -107,7 +115,7 @@ namespace Objects
             _lastPlayer = null;
 
             if (_spriteRenderer != null)
-                _spriteRenderer.color = Color.white;
+                _spriteRenderer.color = originalColor;
 
             if (autoLaunch)
                 LaunchBall();
