@@ -1,6 +1,7 @@
 using Shared;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Objects
 {
@@ -11,8 +12,8 @@ namespace Objects
         public float diameter = 3f;
         public float launchAngleRange = 60f;
 
-        [Tooltip("If true, ball launches immediately regardless of state.")]
-        public bool AutoLaunch = true;
+        [FormerlySerializedAs("AutoLaunch")] [Tooltip("If true, ball launches immediately regardless of state.")]
+        public bool autoLaunch = true;
 
         [Header("Sounds")]
         public AudioClip[] bounceSounds;
@@ -27,6 +28,8 @@ namespace Objects
         private AudioSource _audioSource;
         private Player _lastPlayer;
         private SpriteRenderer _spriteRenderer;
+        private bool _isFrozen;
+        private bool _isPaused;
 
         public Rigidbody2D Body
         {
@@ -66,12 +69,23 @@ namespace Objects
                     Debug.LogWarning("No SimpleCameraShake found on the main camera!");
             }
 
-            if (AutoLaunch)
+            if (autoLaunch)
                 LaunchBall();
+        }
+
+        private void FixedUpdate()
+        {
+            // Continuously enforce constant speed when not paused/frozen
+            if (!_isPaused && !_isFrozen && Body.linearVelocity.sqrMagnitude > 0.01f)
+            {
+                Body.linearVelocity = Body.linearVelocity.normalized * speed;
+                _velocity = Body.linearVelocity;
+            }
         }
 
         public void LaunchBall()
         {
+            _isFrozen = false;
             float angle = Random.Range(-launchAngleRange, launchAngleRange) * Mathf.Deg2Rad;
             int direction = Random.value < 0.5f ? 1 : -1;
             Vector2 dir = new Vector2(Mathf.Cos(angle) * direction, Mathf.Sin(angle));
@@ -81,6 +95,7 @@ namespace Objects
 
         public void FreezeBall()
         {
+            _isFrozen = true;
             _velocity = Body.linearVelocity;
             Body.linearVelocity = Vector2.zero;
         }
@@ -93,7 +108,7 @@ namespace Objects
             if (_spriteRenderer != null)
                 _spriteRenderer.color = Color.white;
 
-            if (AutoLaunch)
+            if (autoLaunch)
                 LaunchBall();
             else
                 FreezeBall();
@@ -102,6 +117,7 @@ namespace Objects
         public override void OnPause()
         {
             base.OnPause();
+            _isPaused = true;
             _velocity = Body.linearVelocity;
             Body.linearVelocity = Vector2.zero;
         }
@@ -109,6 +125,7 @@ namespace Objects
         public override void OnResume()
         {
             base.OnResume();
+            _isPaused = false;
             Body.linearVelocity = _velocity;
         }
 
@@ -131,7 +148,7 @@ namespace Objects
             else if (collision.gameObject.name == "WallRectangle")
             {
                 // Prevent near-horizontal bounces off walls
-                float minVerticalComponent = 0.3f; // Adjust this value (0.2-0.4 works well)
+                float minVerticalComponent = 0.3f;
                 
                 if (Mathf.Abs(reflected.y) < minVerticalComponent)
                 {

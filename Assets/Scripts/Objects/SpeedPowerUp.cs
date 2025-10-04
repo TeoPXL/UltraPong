@@ -16,13 +16,14 @@ namespace Objects
 
         private IEnumerator ApplySpeed(Ball ball)
         {
-            float originalSpeed = ball.speed;
+            // Multiply speed
             ball.speed *= speedMultiplier;
             ball.Body.linearVelocity = ball.Body.linearVelocity.normalized * ball.speed;
 
             yield return new WaitForSeconds(duration);
 
-            ball.speed = originalSpeed;
+            // Restore by dividing instead of resetting to an "original" value
+            ball.speed /= speedMultiplier;
             ball.Body.linearVelocity = ball.Body.linearVelocity.normalized * ball.speed;
         }
     }
