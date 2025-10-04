@@ -75,10 +75,11 @@ namespace Objects
 
         private void FixedUpdate()
         {
+            Debug.Log("fixed update");
             // Continuously enforce constant speed when not paused/frozen
-            if (!_isPaused && !_isFrozen && Body.linearVelocity.sqrMagnitude > 0.01f)
+            if (!_isPaused && !_isFrozen && Body.linearVelocity.sqrMagnitude < 0.01f && Body.position != Vector2.zero)
             {
-                Body.linearVelocity = Body.linearVelocity.normalized * speed;
+                Body.linearVelocity = - Body.position.normalized * speed;
                 _velocity = Body.linearVelocity;
             }
         }
