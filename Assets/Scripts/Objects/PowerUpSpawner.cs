@@ -40,21 +40,16 @@ namespace Objects
 
         void SpawnPowerUp()
         {
-            // Pick a random prefab
             GameObject prefab = powerUpPrefabs[Random.Range(0, powerUpPrefabs.Count)];
 
-            // Calculate random position within radius
             float xPos = transform.position.x + Random.Range(-xRadius, xRadius);
             float yPos = transform.position.y + Random.Range(-yRadius, yRadius);
             Vector3 spawnPos = new Vector3(xPos, yPos, transform.position.z);
 
-            // Instantiate the powerup
-            GameObject powerUp = Instantiate(prefab, spawnPos, Quaternion.identity);
+            // Set parent to this spawner (which is part of arena)
+            GameObject powerUp = Instantiate(prefab, spawnPos, Quaternion.identity, transform);
 
-            // Add to active list
             _activePowerUps.Add(powerUp);
-
-            // Remove from list when destroyed
             powerUp.AddComponent<PowerUpTracker>().Initialize(this);
         }
 
@@ -66,6 +61,17 @@ namespace Objects
 
         void Reset()
         {
+            _activePowerUps.Clear();
+        }
+        
+        public void ClearAllPowerUps()
+        {
+            // Destroy all active powerups
+            foreach (var pu in _activePowerUps)
+            {
+                if (pu != null)
+                    Destroy(pu);
+            }
             _activePowerUps.Clear();
         }
     }

@@ -305,7 +305,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: diameter
-      value: 0.2
+      value: 0.35
       objectReference: {fileID: 0}
     - target: {fileID: 264140247020413760, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: AutoLaunch

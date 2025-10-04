@@ -19,6 +19,7 @@ namespace Objects
         {
             if (_currentArena != null)
             {
+                _currentArena.ClearItems();
                 GameObject.Destroy(_currentArena.gameObject);
                 _currentArena = null;
             }

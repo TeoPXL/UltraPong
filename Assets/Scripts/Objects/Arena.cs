@@ -53,6 +53,12 @@ namespace Objects
             playerOnePrefab.Reset();
             playerTwoPrefab.Reset();
         }
+        
+        public void ClearItems()
+        {
+            if (powerUpSpawner != null)
+                powerUpSpawner.ClearAllPowerUps();
+        }
 
         public void StartGame()
         {
