@@ -84,7 +84,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 20.33, y: 14.4}
+  m_Size: {x: 18, y: 10.36}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 4806292760961133503}
   - component: {fileID: 3204245591685985097}
   m_Layer: 0
-  m_Name: IceArena
+  m_Name: CuteArena
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -195,9 +195,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Objects.PowerUpSpawner
   powerUpPrefabs:
-  - {fileID: 6131622819302525784, guid: 26102bda6f9624325b74bd3545e1a6d7, type: 3}
-  - {fileID: 6131622819302525784, guid: 94cb37ff5c16245bfab172682d2cb8e6, type: 3}
-  - {fileID: 6131622819302525784, guid: f8120c30ea6554875bdedfa4efe3d954, type: 3}
+  - {fileID: 6131622819302525784, guid: c162b9fa36d66498d9379f58c3ca0059, type: 3}
+  - {fileID: 6131622819302525784, guid: 67a2cf082ba7f45c7a8af06496a98694, type: 3}
+  - {fileID: 6131622819302525784, guid: 038a5ffb1675e49598e2068d6f4cda5e, type: 3}
   maxPowerUps: 3
   spawnInterval: 5
   xRadius: 5
