@@ -331,6 +331,10 @@ PrefabInstance:
       propertyPath: 'bounceSounds.Array.data[4]'
       value: 
       objectReference: {fileID: 8300000, guid: e18b64faf895e427a961fed9f70db54b, type: 3}
+    - target: {fileID: 3804925877255626691, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5122904670591779585, guid: 7ac3cae9a607dfe4e837885f3bc7e713, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
